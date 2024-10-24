@@ -9,8 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 @Getter
 @Setter
@@ -27,6 +30,7 @@ public abstract class Ciclista {
     private String nome;
     
     @NotBlank(message = "A data de nascimento não pode estar em branco")
+    @Pattern(regexp = "\\d{2}/\\d{2}/\\d{4}", message = "Data de nascimento deve estar no formato dd/mm/aaaa")
     private String nascimento;
     
     @Email(message = "Email deve ser válido")
@@ -34,18 +38,20 @@ public abstract class Ciclista {
     private String email;
     
     @NotBlank(message = "O telefone não pode estar em branco")
+    @Pattern(regexp = "\\d{10,11}", message = "Telefone deve conter 10 ou 11 dígitos")
     private String telefone;
 
     private LocalDateTime dataCadastro;
 
+    @Valid
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    //@JoinColumn(name = "ciclista_id")
     private List<CartaoCredito> cartoes = new ArrayList<>();
 
+    @NotNull(message = "Status do ciclista não pode ser nulo")
     @Enumerated(EnumType.STRING)
     private StatusCiclista status = StatusCiclista.ATIVO;
 
- // Getters e Setters
+    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -110,7 +116,7 @@ public abstract class Ciclista {
         this.status = status;
     }
 
-    // Métodos adicionais
+    // Métodos
     public void adicionarCartao(CartaoCredito cartao) {
         this.cartoes.add(cartao);
     }
