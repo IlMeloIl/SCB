@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -16,18 +17,22 @@ public class Emprestimo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Ciclista é obrigatório")
     @ManyToOne
     @JoinColumn(name = "ciclista_id", nullable = false)
     private Ciclista ciclista;
 
+    @NotNull(message = "Bicicleta é obrigatória")
     @ManyToOne
     @JoinColumn(name = "bicicleta_id", nullable = false)
     private Bicicleta bicicleta;
 
+    @NotNull(message = "Tranca inicial é obrigatória")
     @ManyToOne
     @JoinColumn(name = "tranca_inicio_id", nullable = false)
     private Tranca trancaInicio;
 
+    @NotNull(message = "Totem inicial é obrigatório")
     @ManyToOne
     @JoinColumn(name = "totem_inicio_id", nullable = false)
     private Totem totemInicio;
