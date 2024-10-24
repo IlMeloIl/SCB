@@ -46,15 +46,8 @@ public class CartaoCreditoService {
     }
 
     private void registrarCobranca(Ciclista ciclista, CartaoCredito cartao, double valor) {
-        // Aqui você poderia registrar a cobrança em um histórico
         System.out.println("Cobrança de R$" + valor + " realizada para o ciclista " + ciclista.getNome() +
                 " no cartão " + cartao.getNumero() + " em " + LocalDateTime.now());
-    }
-
-    public boolean validarCartao(CartaoCredito cartao) {
-        // Implementar lógica de validação do cartão
-        // Por exemplo, verificar se o número é válido, se a data de validade não expirou, etc.
-        return true; // Retorno simplificado para este exemplo
     }
 
     @Transactional
