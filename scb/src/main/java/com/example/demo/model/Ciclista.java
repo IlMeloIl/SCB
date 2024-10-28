@@ -14,6 +14,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -36,6 +37,10 @@ public abstract class Ciclista {
     @Email(message = "Email deve ser válido")
     @NotBlank(message = "Email não pode estar em branco")
     private String email;
+    
+    @NotBlank(message = "A senha não pode estar em branco")
+    @Size(min = 1, message = "A senha deve ter pelo menos 1 caractere")
+    private String senha;
     
     @NotBlank(message = "O telefone não pode estar em branco")
     @Pattern(regexp = "\\d{10,11}", message = "Telefone deve conter 10 ou 11 dígitos")
@@ -84,6 +89,14 @@ public abstract class Ciclista {
         this.email = email;
     }
 
+    public String getSenha() {
+        return senha;
+    }
+    
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+    
     public String getTelefone() {
         return telefone;
     }

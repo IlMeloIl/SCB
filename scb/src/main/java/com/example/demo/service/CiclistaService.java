@@ -5,6 +5,7 @@ import com.example.demo.model.Emprestimo;
 import com.example.demo.model.Estrangeiro;
 import com.example.demo.dto.CartaoCreditoDTO;
 import com.example.demo.dto.CiclistaAtualizacaoDTO;
+import com.example.demo.dto.LoginResponseDTO;
 import com.example.demo.model.Brasileiro;
 import com.example.demo.model.CartaoCredito;
 import com.example.demo.repository.CiclistaRepository;
@@ -38,11 +39,36 @@ public class CiclistaService {
     
     @Autowired
     private EmprestimoRepository emprestimoRepository;
+    
+    @Autowired
+    private AuthService authService;
 
     public Ciclista cadastrarCiclista(@Valid Ciclista ciclista) {
         validarCiclista(ciclista);
+        
+        if (ciclista.getSenha() == null || ciclista.getSenha().trim().isEmpty()) {
+            throw new RuntimeException("A senha é obrigatória");
+        }
+        
+        // Criptografa a senha
+        String senhaHash = authService.criptografarSenha(ciclista.getSenha());
+        ciclista.setSenha(senhaHash);
+        
         ciclista.setDataCadastro(LocalDateTime.now());
         return ciclistaRepository.save(ciclista);
+    }
+    
+    public Ciclista autenticarCiclista(String email, String senha) {
+        Optional<Ciclista> ciclistaOpt = ciclistaRepository.findByEmail(email);
+        
+        if (ciclistaOpt.isPresent()) {
+            Ciclista ciclista = ciclistaOpt.get();
+            if (authService.verificarSenha(senha, ciclista.getSenha())) {
+                return ciclista;
+            }
+        }
+        
+        throw new RuntimeException("Email ou senha inválidos");
     }
 
     private void validarCiclista(Ciclista ciclista) {
@@ -62,6 +88,40 @@ public class CiclistaService {
         }
     }
 
+    public LoginResponseDTO realizarLogin(String email, String senha) {
+        Ciclista ciclista = autenticarCiclista(email, senha);
+        
+        LoginResponseDTO response = new LoginResponseDTO();
+        response.setId(ciclista.getId());
+        response.setEmail(ciclista.getEmail());
+        response.setNome(ciclista.getNome());
+        
+        if (ciclista instanceof Brasileiro) {
+            response.setTipo("BRASILEIRO");
+            response.setDocumento(((Brasileiro) ciclista).getCpf());
+        } else {
+            response.setTipo("ESTRANGEIRO");
+            response.setDocumento(((Estrangeiro) ciclista).getPassaporte());
+        }
+        
+        // Verifica se há empréstimo ativo
+        List<Emprestimo> emprestimos = emprestimoRepository.findByCiclistaId(ciclista.getId());
+        boolean hasActiveEmprestimo = emprestimos.stream()
+            .anyMatch(e -> e.getHoraFim() == null);
+            
+        response.setHasActiveEmprestimo(hasActiveEmprestimo);
+        
+        if (hasActiveEmprestimo) {
+            Emprestimo emprestimoAtivo = emprestimos.stream()
+                .filter(e -> e.getHoraFim() == null)
+                .findFirst()
+                .get();
+            response.setCurrentBikeInfo("Bicicleta " + emprestimoAtivo.getBicicleta().getNumero());
+        }
+        
+        return response;
+    }
+    
     public Ciclista buscarCiclista(String identificacao) {
         System.out.println("Buscando ciclista com identificação: " + identificacao);
         
@@ -116,12 +176,6 @@ public class CiclistaService {
         return email != null && pattern.matcher(email).matches();
     }
 
-    //@Transactional
-    //public CartaoCredito adicionarCartaoCredito(String identificacao, CartaoCredito cartao) {
-    //    Ciclista ciclista = buscarCiclista(identificacao);
-    //    return cartaoCreditoService.adicionarCartao(ciclista.getId(), cartao);
-    //}
-    
     @Transactional
     public CartaoCreditoDTO adicionarCartaoCredito(String identificacao, CartaoCreditoDTO cartaoDTO) {
         Ciclista ciclista = buscarCiclista(identificacao);

@@ -5,6 +5,8 @@ import com.example.demo.model.Emprestimo;
 import com.example.demo.dto.CartaoCreditoDTO;
 import com.example.demo.dto.CiclistaAtualizacaoDTO;
 import com.example.demo.dto.EmprestimoDTO;
+import com.example.demo.dto.LoginDTO;
+import com.example.demo.dto.LoginResponseDTO;
 import com.example.demo.model.Brasileiro;
 import com.example.demo.model.Estrangeiro;
 import com.example.demo.model.CartaoCredito;
@@ -45,6 +47,16 @@ public class CiclistaController {
             return ResponseEntity.ok(novoCiclista);
         } catch (RuntimeException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+    
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO loginDTO) {
+        try {
+            LoginResponseDTO response = ciclistaService.realizarLogin(loginDTO.getEmail(), loginDTO.getSenha());
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciais inválidas");
         }
     }
 
