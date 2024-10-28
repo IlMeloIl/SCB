@@ -17,6 +17,7 @@ public class WindowManager {
     public static final String TOTEM_LIST_PANEL = "TOTEM_LIST";
     public static final String EMPRESTIMO_PANEL = "EMPRESTIMO";
     public static final String DEVOLUCAO_PANEL = "DEVOLUCAO";
+    public static final String PERFIL_PANEL = "PERFIL";
 
     // Componentes principais
     private MainFrame mainFrame;
@@ -34,14 +35,16 @@ public class WindowManager {
     private String currentUserName;
     private boolean hasActiveEmprestimo;
     private String currentBikeInfo;
+    private String currentUserDocument;
 
     // Painéis
     private LoginPanel loginPanel;
     private CadastroPanel cadastroPanel;
     private DashboardPanel dashboardPanel;
-//    private TotemListPanel totemListPanel;
-//    private EmprestimoPanel emprestimoPanel;
+    private TotemListPanel totemListPanel;
+    private EmprestimoPanel emprestimoPanel;
 //    private DevolucaoPanel devolucaoPanel;
+    private PerfilPanel perfilPanel;
 
     public WindowManager(ApplicationContext springContext) {
         this.springContext = springContext;
@@ -72,25 +75,27 @@ public class WindowManager {
         loginPanel = new LoginPanel(this, ciclistaController);
         cadastroPanel = new CadastroPanel(this, ciclistaController);
         dashboardPanel = new DashboardPanel(this, ciclistaController);
-//        totemListPanel = new TotemListPanel(this, totemController);
-//        emprestimoPanel = new EmprestimoPanel(this, emprestimoController);
+        totemListPanel = new TotemListPanel(this, totemController);
+        emprestimoPanel = new EmprestimoPanel(this, emprestimoController, totemController, ciclistaController);
 //        devolucaoPanel = new DevolucaoPanel(this, emprestimoController);
+        perfilPanel = new PerfilPanel(this, ciclistaController);
     }
 
     private void addPanelsToContent() {
         contentPanel.add(loginPanel, LOGIN_PANEL);
         contentPanel.add(cadastroPanel, CADASTRO_PANEL);
         contentPanel.add(dashboardPanel, DASHBOARD_PANEL);
-//        contentPanel.add(totemListPanel, TOTEM_LIST_PANEL);
-//        contentPanel.add(emprestimoPanel, EMPRESTIMO_PANEL);
+        contentPanel.add(totemListPanel, TOTEM_LIST_PANEL);
+        contentPanel.add(emprestimoPanel, EMPRESTIMO_PANEL);
 //        contentPanel.add(devolucaoPanel, DEVOLUCAO_PANEL);
+        contentPanel.add(perfilPanel, PERFIL_PANEL);
     }
 
     // Métodos de navegação
     public void showLogin() {
-        cardLayout.show(contentPanel, LOGIN_PANEL);
+    	resetSessionData();
+    	cardLayout.show(contentPanel, LOGIN_PANEL);
         mainFrame.setTitle("SCB - Login");
-        resetSessionData();
     }
 
     public void showCadastro() {
@@ -99,14 +104,20 @@ public class WindowManager {
     }
 
     public void showDashboard() {
+        if (currentUserDocument == null) {
+            showError("Por favor, faça login novamente");
+            showLogin();
+            return;
+        }
         cardLayout.show(contentPanel, DASHBOARD_PANEL);
         mainFrame.setTitle("SCB - Painel Principal");
-        updateDashboardInfo();
+        updateDashboardInfo(); // Garante que as informações estão atualizadas
     }
 
     public void showTotemList() {
         cardLayout.show(contentPanel, TOTEM_LIST_PANEL);
         mainFrame.setTitle("SCB - Lista de Totens");
+        totemListPanel.refreshTotemList(); // Atualiza a lista ao mostrar o painel
     }
 
     public void showEmprestimo() {
@@ -126,11 +137,23 @@ public class WindowManager {
         cardLayout.show(contentPanel, DEVOLUCAO_PANEL);
         mainFrame.setTitle("SCB - Devolução");
     }
+    
+    public void showPerfil() {
+        if (currentUserDocument == null) {
+            showError("Por favor, faça login novamente");
+            showLogin();
+            return;
+        }
+        cardLayout.show(contentPanel, PERFIL_PANEL);
+        mainFrame.setTitle("SCB - Meu Perfil");
+        perfilPanel.carregarDados();
+    }
 
     // Gerenciamento de sessão
-    public void handleLoginSuccess(String userEmail, String userName, boolean hasEmprestimo, String bikeInfo) {
+    public void handleLoginSuccess(String userEmail, String userName, String userDocument,boolean hasEmprestimo, String bikeInfo) {
         this.currentUserEmail = userEmail;
         this.currentUserName = userName;
+        this.currentUserDocument = userDocument;
         this.hasActiveEmprestimo = hasEmprestimo;
         this.currentBikeInfo = bikeInfo;
         showDashboard();
@@ -139,6 +162,7 @@ public class WindowManager {
     private void resetSessionData() {
         currentUserEmail = null;
         currentUserName = null;
+        currentUserDocument = null;
         hasActiveEmprestimo = false;
         currentBikeInfo = null;
     }
@@ -159,6 +183,10 @@ public class WindowManager {
         return currentUserName;
     }
 
+    public String getCurrentUserDocument() {
+        return currentUserDocument;
+    }
+    
     public boolean hasActiveEmprestimo() {
         return hasActiveEmprestimo;
     }
@@ -199,4 +227,21 @@ public class WindowManager {
     public MainFrame getMainFrame() {
         return mainFrame;
     }
+    
+    public void updateUserInfo(String email, String name) {
+        this.currentUserEmail = email;
+        this.currentUserName = name;
+        // Atualizar nome em todos os lugares necessários
+        dashboardPanel.setUserName(name);
+    }
+    
+    public void updateEmprestimoStatus(boolean hasEmprestimo, String bikeInfo) {
+        this.hasActiveEmprestimo = hasEmprestimo;
+        this.currentBikeInfo = bikeInfo;
+        // Atualizar status em todos os lugares necessários
+        dashboardPanel.updateEmprestimoStatus(hasEmprestimo, bikeInfo);
+    }
+    
+   
+    
 }

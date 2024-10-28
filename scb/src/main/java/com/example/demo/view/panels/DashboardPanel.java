@@ -80,10 +80,17 @@ public class DashboardPanel extends JPanel {
         menuPanel.setPreferredSize(new Dimension(200, getHeight()));
         
         addMenuButton("Início", e -> showHome());
-        addMenuButton("Totens", e -> showTotems());
-        addMenuButton("Novo Empréstimo", e -> showEmprestimo());
-        addMenuButton("Devolver Bicicleta", e -> showDevolucao());
-        addMenuButton("Meu Perfil", e -> showProfile());
+        addMenuButton("Totens", e -> windowManager.showTotemList());  // Aqui está a chamada correta
+        addMenuButton("Novo Empréstimo", e -> windowManager.showEmprestimo());
+        addMenuButton("Devolver Bicicleta", e -> windowManager.showDevolucao());
+        addMenuButton("Meu Perfil", e -> {
+            if (windowManager.getCurrentUserDocument() != null) {
+                windowManager.showPerfil();
+            } else {
+                windowManager.showError("Por favor, faça login novamente");
+                windowManager.showLogin();
+            }
+        });
         
         // Status do empréstimo atual
         statusLabel = new JLabel("Nenhuma bicicleta em uso");
@@ -132,31 +139,12 @@ public class DashboardPanel extends JPanel {
         contentCardLayout.show(contentPanel, "HOME");
     }
     
-    private void showTotems() {
-        // TODO: Implementar navegação para TotemListPanel
-    }
-    
-    private void showEmprestimo() {
-        // TODO: Implementar navegação para EmprestimoPanel
-    }
-    
-    private void showDevolucao() {
-        // TODO: Implementar navegação para DevolucaoPanel
-    }
-    
     private void showProfile() {
-        // TODO: Implementar navegação para perfil do usuário
+        // TODO: Implementar tela de perfil
     }
     
     private void handleLogout() {
-        int option = JOptionPane.showConfirmDialog(
-            this,
-            "Deseja realmente sair do sistema?",
-            "Confirmação",
-            JOptionPane.YES_NO_OPTION
-        );
-        
-        if (option == JOptionPane.YES_OPTION) {
+        if (windowManager.showConfirmDialog("Deseja realmente sair do sistema?", "Confirmação de Saída")) {
             windowManager.showLogin();
         }
     }
@@ -164,6 +152,8 @@ public class DashboardPanel extends JPanel {
     // Métodos públicos para atualização de estado
     public void setUserName(String name) {
         welcomeLabel.setText("Bem-vindo(a), " + name);
+        revalidate();
+        repaint();
     }
     
     public void updateEmprestimoStatus(boolean hasEmprestimo, String bikeInfo) {
@@ -174,5 +164,7 @@ public class DashboardPanel extends JPanel {
             statusLabel.setText("Nenhuma bicicleta em uso");
             statusLabel.setForeground(ColorScheme.TEXT);
         }
+        revalidate();
+        repaint();
     }
 }

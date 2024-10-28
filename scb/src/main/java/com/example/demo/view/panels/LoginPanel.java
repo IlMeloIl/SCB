@@ -123,6 +123,7 @@ public class LoginPanel extends JPanel {
                 windowManager.handleLoginSuccess(
                     loginResponse.getEmail(),
                     loginResponse.getNome(),
+                    loginResponse.getDocumento(),
                     loginResponse.isHasActiveEmprestimo(),
                     loginResponse.getCurrentBikeInfo()
                 );
