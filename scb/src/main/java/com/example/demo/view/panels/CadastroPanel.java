@@ -28,7 +28,10 @@ public class CadastroPanel extends JPanel {
     private JPasswordField confirmarSenhaField;
     private JTextField documentoField;
     private JComboBox<String> tipoUsuarioCombo;
+    private JComboBox<String> nacionalidadeCombo;
     private JLabel documentoLabel;
+    private JLabel nacionalidadeLabel;
+    private DefaultComboBoxModel<String> nacionalidadeModel;
 
     public CadastroPanel(WindowManager windowManager, CiclistaController ciclistaController) {
         this.windowManager = windowManager;
@@ -69,14 +72,45 @@ public class CadastroPanel extends JPanel {
         gbc.gridx = 1;
         centerPanel.add(tipoUsuarioCombo, gbc);
 
-        // Nome
+        // Nacionalidade (inicialmente invisível)
+        nacionalidadeLabel = new JLabel("Nacionalidade:");
+        String[] paises = {
+            "Argentina", "Bolívia", "Chile", "Colômbia",
+            "Equador", "Estados Unidos", "França", "Alemanha",
+            "Itália", "Japão", "México", "Paraguai",
+            "Peru", "Portugal", "Espanha", "Uruguai", "Venezuela"
+        };
+        nacionalidadeModel = new DefaultComboBoxModel<>(paises);
+        nacionalidadeCombo = new JComboBox<>(nacionalidadeModel);
+        nacionalidadeCombo.setSelectedIndex(-1);  // Nenhum item selecionado inicialmente
+        nacionalidadeCombo.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                    int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (index == -1 && value == null) {
+                    setText("Selecione um país");
+                }
+                return this;
+            }
+        });
+        
         gbc.gridy = 2;
+        gbc.gridx = 0;
+        nacionalidadeLabel.setVisible(false);
+        centerPanel.add(nacionalidadeLabel, gbc);
+        gbc.gridx = 1;
+        nacionalidadeCombo.setVisible(false);
+        centerPanel.add(nacionalidadeCombo, gbc);
+
+        // Nome
+        gbc.gridy = 3;
         gbc.gridx = 0;
         centerPanel.add(new JLabel("Nome:"), gbc);
         nomeField = new JTextField(20);
         gbc.gridx = 1;
         centerPanel.add(nomeField, gbc);
-
+        
         // Data de Nascimento
         try {
             MaskFormatter nascimentoMask = new MaskFormatter("##/##/####");
@@ -84,14 +118,14 @@ public class CadastroPanel extends JPanel {
         } catch (ParseException e) {
             nascimentoField = new JFormattedTextField();
         }
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridx = 0;
         centerPanel.add(new JLabel("Nascimento:"), gbc);
         gbc.gridx = 1;
         centerPanel.add(nascimentoField, gbc);
 
         // Email
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.gridx = 0;
         centerPanel.add(new JLabel("Email:"), gbc);
         emailField = new JTextField(20);
@@ -99,7 +133,7 @@ public class CadastroPanel extends JPanel {
         centerPanel.add(emailField, gbc);
 
         // Telefone
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.gridx = 0;
         centerPanel.add(new JLabel("Telefone:"), gbc);
         telefoneField = new JTextField(20);
@@ -109,14 +143,14 @@ public class CadastroPanel extends JPanel {
         // Documento (CPF/Passaporte)
         documentoLabel = new JLabel("CPF:");
         documentoField = new JTextField(20);
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         gbc.gridx = 0;
         centerPanel.add(documentoLabel, gbc);
         gbc.gridx = 1;
         centerPanel.add(documentoField, gbc);
 
         // Senha
-        gbc.gridy = 7;
+        gbc.gridy = 8;
         gbc.gridx = 0;
         centerPanel.add(new JLabel("Senha:"), gbc);
         senhaField = new JPasswordField(20);
@@ -124,7 +158,7 @@ public class CadastroPanel extends JPanel {
         centerPanel.add(senhaField, gbc);
 
         // Confirmar Senha
-        gbc.gridy = 8;
+        gbc.gridy = 9;
         gbc.gridx = 0;
         centerPanel.add(new JLabel("Confirmar Senha:"), gbc);
         confirmarSenhaField = new JPasswordField(20);
@@ -146,7 +180,7 @@ public class CadastroPanel extends JPanel {
         buttonPanel.add(voltarButton);
         buttonPanel.add(cadastrarButton);
 
-        gbc.gridy = 9;
+        gbc.gridy = 10;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
         gbc.insets = new Insets(20, 5, 5, 5);
@@ -156,20 +190,31 @@ public class CadastroPanel extends JPanel {
         add(centerPanel);
 
         // Listeners
-        tipoUsuarioCombo.addActionListener(e -> updateDocumentoLabel());
+        tipoUsuarioCombo.addActionListener(e -> {
+            String tipoSelecionado = (String) tipoUsuarioCombo.getSelectedItem();
+            boolean isEstrangeiro = "Estrangeiro".equals(tipoSelecionado);
+            documentoLabel.setText(isEstrangeiro ? "Passaporte:" : "CPF:");
+            nacionalidadeLabel.setVisible(isEstrangeiro);
+            nacionalidadeCombo.setVisible(isEstrangeiro);
+            revalidate();
+            repaint();
+        });
         cadastrarButton.addActionListener(e -> handleCadastro());
         voltarButton.addActionListener(e -> windowManager.showLogin());
     }
 
-    private void updateDocumentoLabel() {
-        String tipoSelecionado = (String) tipoUsuarioCombo.getSelectedItem();
-        documentoLabel.setText(tipoSelecionado.equals("Brasileiro") ? "CPF:" : "Passaporte:");
-        revalidate();
-        repaint();
-    }
-
     private void handleCadastro() {
-        // Validação básica
+        // Validação do tipo de usuário e nacionalidade primeiro
+        String tipoSelecionado = (String) tipoUsuarioCombo.getSelectedItem();
+        if ("Estrangeiro".equals(tipoSelecionado) && nacionalidadeCombo.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(this,
+                "Por favor, selecione uma nacionalidade",
+                "Erro",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Validação dos demais campos depois
         if (nomeField.getText().isEmpty() || 
             nascimentoField.getText().isEmpty() ||
             emailField.getText().isEmpty() ||
@@ -198,7 +243,7 @@ public class CadastroPanel extends JPanel {
 
         try {
             ResponseEntity<?> response;
-            if (tipoUsuarioCombo.getSelectedItem().equals("Brasileiro")) {
+            if ("Brasileiro".equals(tipoSelecionado)) {
                 Brasileiro brasileiro = new Brasileiro();
                 brasileiro.setNome(nomeField.getText());
                 brasileiro.setNascimento(nascimentoField.getText());
@@ -216,6 +261,7 @@ public class CadastroPanel extends JPanel {
                 estrangeiro.setTelefone(telefoneField.getText());
                 estrangeiro.setSenha(senha);
                 estrangeiro.setPassaporte(documentoField.getText());
+                estrangeiro.setNacionalidade(nacionalidadeCombo.getSelectedItem().toString());
                 
                 response = ciclistaController.cadastrarEstrangeiro(estrangeiro);
             }
@@ -245,5 +291,8 @@ public class CadastroPanel extends JPanel {
         senhaField.setText("");
         confirmarSenhaField.setText("");
         tipoUsuarioCombo.setSelectedIndex(0);
+        nacionalidadeCombo.setSelectedIndex(0);
+        nacionalidadeLabel.setVisible(false);
+        nacionalidadeCombo.setVisible(false);
     }
 }

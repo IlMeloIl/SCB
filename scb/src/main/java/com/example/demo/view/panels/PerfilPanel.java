@@ -13,6 +13,8 @@ import com.example.demo.controller.CiclistaController;
 import com.example.demo.dto.CiclistaAtualizacaoDTO;
 import com.example.demo.dto.CartaoCreditoDTO;
 import com.example.demo.model.CartaoCredito;
+import com.example.demo.model.Ciclista;
+
 import java.util.List;
 
 public class PerfilPanel extends JPanel {
@@ -209,27 +211,38 @@ public class PerfilPanel extends JPanel {
         return cartoesPanel;
     }
 
-    public void carregarDados() {
-        try {
-            String documento = windowManager.getCurrentUserDocument();
-            if (documento == null || documento.isEmpty()) {
-                windowManager.showError("Usuário não autenticado");
-                windowManager.showLogin();
-                return;
-            }
+	    public void carregarDados() {
+	        try {
+	            String documento = windowManager.getCurrentUserDocument();
+	            if (documento == null || documento.isEmpty()) {
+	                windowManager.showError("Usuário não autenticado");
+	                windowManager.showLogin();
+	                return;
+	            }
+	
+	            ResponseEntity<Ciclista> response = ciclistaController.buscarCiclista(documento);
+	            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+	                Ciclista ciclista = response.getBody();
+	                
+	                nomeField.setText(ciclista.getNome());
+	                emailField.setText(ciclista.getEmail());
+	                telefoneField.setText(ciclista.getTelefone() != null ? ciclista.getTelefone() : "");
+	                documentoLabel.setText(documento);
 
-            nomeField.setText(windowManager.getCurrentUserName());
-            emailField.setText(windowManager.getCurrentUserEmail());
-            documentoLabel.setText(documento);
-
-            // Carregar cartões
-            List<CartaoCredito> cartoes = ciclistaController.listarCartoes(documento).getBody();
-            atualizarTabelaCartoes(cartoes);
-        } catch (Exception e) {
-            windowManager.showError("Erro ao carregar dados: " + e.getMessage());
-            windowManager.showDashboard();
-        }
-    }
+	                // Carregar cartões
+	                List<CartaoCredito> cartoes = ciclistaController.listarCartoes(documento).getBody();
+	                atualizarTabelaCartoes(cartoes);
+	            } else {
+	                // Se não encontrar o ciclista, usar os dados do WindowManager
+	                nomeField.setText(windowManager.getCurrentUserName());
+	                emailField.setText(windowManager.getCurrentUserEmail());
+	                documentoLabel.setText(documento);
+	            }
+	        } catch (Exception e) {
+	            windowManager.showError("Erro ao carregar dados: " + e.getMessage());
+	            windowManager.showDashboard();
+	        }
+	    }
 
     private void toggleEditMode(boolean edit) {
         editMode = edit;
@@ -256,29 +269,40 @@ public class PerfilPanel extends JPanel {
     }
 
     private void salvarAlteracoes() {
-        try {
+    	try {
+            String novoNome = nomeField.getText().trim();
+            String novoEmail = emailField.getText().trim();
+            String novoTelefone = telefoneField.getText().trim();
+
+            // Validar campos obrigatórios
+            if (novoNome.isEmpty() || novoEmail.isEmpty()) {
+                windowManager.showError("Nome e email são obrigatórios");
+                return;
+            }
+
             CiclistaAtualizacaoDTO atualizacaoDTO = new CiclistaAtualizacaoDTO();
-            atualizacaoDTO.setNome(nomeField.getText());
-            atualizacaoDTO.setEmail(emailField.getText());
-            atualizacaoDTO.setTelefone(telefoneField.getText());
+            atualizacaoDTO.setNome(novoNome);
+            atualizacaoDTO.setEmail(novoEmail);
+            // Só inclui o telefone se foi preenchido
+            if (!novoTelefone.isEmpty()) {
+                atualizacaoDTO.setTelefone(novoTelefone);
+            }
 
             ResponseEntity<?> response = ciclistaController.atualizarCiclista(
-                    windowManager.getCurrentUserDocument(),
-                    atualizacaoDTO
-                );
-            
+                windowManager.getCurrentUserDocument(),
+                atualizacaoDTO
+            );
+
             if (response.getStatusCode().is2xxSuccessful()) {
                 // Atualizar dados na sessão do WindowManager
                 windowManager.updateUserInfo(
-                    emailField.getText(),
-                    nomeField.getText()
+                    novoEmail,
+                    novoNome
                 );
-            
-            
 
-            windowManager.showSuccess("Dados atualizados com sucesso!");
-            toggleEditMode(false);
-            carregarDados();
+                windowManager.showSuccess("Dados atualizados com sucesso!");
+                toggleEditMode(false);
+                carregarDados();
             }
         } catch (Exception e) {
             windowManager.showError("Erro ao atualizar dados: " + e.getMessage());

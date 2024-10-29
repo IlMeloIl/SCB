@@ -206,8 +206,7 @@ public class EmprestimoPanel extends JPanel {
                     JOptionPane.YES_NO_OPTION
                 );
                 if (option == JOptionPane.YES_OPTION) {
-                    // TODO: Implementar navegação para tela de perfil/cartões
-                    windowManager.showError("Funcionalidade em desenvolvimento");
+                	windowManager.showPerfil();
                 }
                 return;
             }
