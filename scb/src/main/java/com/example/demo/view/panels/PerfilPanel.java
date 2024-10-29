@@ -7,10 +7,13 @@ import javax.swing.table.JTableHeader;
 import org.springframework.http.ResponseEntity;
 
 import java.awt.*;
+import java.time.format.DateTimeFormatter;
+
 import com.example.demo.view.WindowManager;
 import com.example.demo.view.utils.ColorScheme;
 import com.example.demo.controller.CiclistaController;
 import com.example.demo.dto.CiclistaAtualizacaoDTO;
+import com.example.demo.dto.EmprestimoDTO;
 import com.example.demo.dto.CartaoCreditoDTO;
 import com.example.demo.model.CartaoCredito;
 import com.example.demo.model.Ciclista;
@@ -31,6 +34,9 @@ public class PerfilPanel extends JPanel {
     // Tabela de cartões
     private JTable cartoesTable;
     private DefaultTableModel cartoesTableModel;
+    
+    private JTable historicoTable;
+    private DefaultTableModel historicoTableModel;
     
     // Painéis
     private JPanel infoPanel;
@@ -65,13 +71,19 @@ public class PerfilPanel extends JPanel {
 
         // Painel principal com divisão vertical
         JSplitPane mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        mainSplitPane.setDividerLocation(250);
+        mainSplitPane.setDividerLocation(350);
 
-        // Painel de informações pessoais
-        mainSplitPane.setTopComponent(setupInfoPanel());
-        
-        // Painel de cartões
-        mainSplitPane.setBottomComponent(setupCartoesPanel());
+        // Painel superior dividido horizontalmente
+        JSplitPane topSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        topSplitPane.setDividerLocation(400);
+
+        // Adiciona painéis de informações e cartões
+        topSplitPane.setLeftComponent(setupInfoPanel());
+        topSplitPane.setRightComponent(setupCartoesPanel());
+
+        // Adiciona o painel superior e o histórico ao split principal
+        mainSplitPane.setTopComponent(topSplitPane);
+        mainSplitPane.setBottomComponent(setupHistoricoPanel());
 
         add(headerPanel, BorderLayout.NORTH);
         add(mainSplitPane, BorderLayout.CENTER);
@@ -211,6 +223,85 @@ public class PerfilPanel extends JPanel {
         return cartoesPanel;
     }
 
+    private JPanel setupHistoricoPanel() {
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setBackground(ColorScheme.BACKGROUND);
+        panel.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(ColorScheme.PRIMARY),
+            "Histórico de Empréstimos"
+        ));
+
+        // Configurar tabela de histórico
+        String[] columns = {
+            "Data/Hora Início", 
+            "Local Retirada", 
+            "Data/Hora Fim", 
+            "Local Devolução",
+            "Valor Inicial",
+            "Valor Extra",
+            "Status"
+        };
+        historicoTableModel = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        historicoTable = new JTable(historicoTableModel);
+        historicoTable.setRowHeight(25);
+        
+        // Configurar cabeçalho da tabela
+        JTableHeader header = historicoTable.getTableHeader();
+        header.setBackground(ColorScheme.PRIMARY);
+        header.setForeground(Color.BLACK);
+        header.setFont(new Font("Arial", Font.BOLD, 12));
+
+        // Adicionar tabela ao painel com scroll
+        panel.add(new JScrollPane(historicoTable), BorderLayout.CENTER);
+
+        // Botão de atualizar
+        JButton refreshButton = new JButton("Atualizar Histórico");
+        refreshButton.setBackground(ColorScheme.PRIMARY);
+        refreshButton.setForeground(Color.WHITE);
+        refreshButton.addActionListener(e -> carregarHistorico());
+
+        panel.add(refreshButton, BorderLayout.SOUTH);
+
+        return panel;
+    }
+
+    private void carregarHistorico() {
+        try {
+            String documento = windowManager.getCurrentUserDocument();
+            if (documento == null) return;
+
+            // Limpar tabela atual
+            historicoTableModel.setRowCount(0);
+
+            // Buscar histórico
+            List<EmprestimoDTO> historico = ciclistaController.buscarHistoricoEmprestimos(documento).getBody();
+            
+            if (historico != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+                for (EmprestimoDTO emprestimo : historico) {
+                    historicoTableModel.addRow(new Object[]{
+                        emprestimo.getHoraInicio().format(formatter),
+                        "Totem " + emprestimo.getTotemInicioId(),
+                        emprestimo.getHoraFim() != null ? emprestimo.getHoraFim().format(formatter) : "-",
+                        emprestimo.getTotemFimId() != null ? "Totem " + emprestimo.getTotemFimId() : "-",
+                        String.format("R$ %.2f", emprestimo.getTaxaInicial()),
+                        emprestimo.getTaxaExtra() != null ? String.format("R$ %.2f", emprestimo.getTaxaExtra()) : "-",
+                        emprestimo.getStatus()
+                    });
+                }
+            }
+        } catch (Exception e) {
+            windowManager.showError("Erro ao carregar histórico: " + e.getMessage());
+        }
+    }
+    
 	    public void carregarDados() {
 	        try {
 	            String documento = windowManager.getCurrentUserDocument();
@@ -232,6 +323,7 @@ public class PerfilPanel extends JPanel {
 	                // Carregar cartões
 	                List<CartaoCredito> cartoes = ciclistaController.listarCartoes(documento).getBody();
 	                atualizarTabelaCartoes(cartoes);
+	                carregarHistorico();
 	            } else {
 	                // Se não encontrar o ciclista, usar os dados do WindowManager
 	                nomeField.setText(windowManager.getCurrentUserName());
