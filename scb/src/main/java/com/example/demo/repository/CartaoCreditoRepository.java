@@ -10,6 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface CartaoCreditoRepository extends JpaRepository<CartaoCredito, Long> {
-    List<CartaoCredito> findByCiclista(Ciclista ciclista);
-    Optional<CartaoCredito> findByCiclistaAndPrincipal(Ciclista ciclista, boolean principal);
+	List<CartaoCredito> findByCiclista(Ciclista ciclista);
+
+	Optional<CartaoCredito> findByCiclistaAndPrincipal(Ciclista ciclista, boolean principal);
 }

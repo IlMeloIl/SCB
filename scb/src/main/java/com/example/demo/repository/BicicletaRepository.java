@@ -10,7 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface BicicletaRepository extends JpaRepository<Bicicleta, Long> {
-    Optional<Bicicleta> findByNumero(String numero);
-    List<Bicicleta> findByStatus(StatusBicicleta status);
-    List<Bicicleta> findByMarca(String marca);
+	Optional<Bicicleta> findByNumero(String numero);
+
+	List<Bicicleta> findByStatus(StatusBicicleta status);
+
+	List<Bicicleta> findByMarca(String marca);
 }

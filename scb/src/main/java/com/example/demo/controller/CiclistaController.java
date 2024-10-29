@@ -27,139 +27,139 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/api/ciclistas")
 public class CiclistaController {
 
-    @Autowired
-    private CiclistaService ciclistaService;
+	@Autowired
+	private CiclistaService ciclistaService;
 
-    @PostMapping("/brasileiro")
-    public ResponseEntity<Ciclista> cadastrarBrasileiro(@Valid @RequestBody Brasileiro brasileiro) {
-        try {
-            Ciclista novoCiclista = ciclistaService.cadastrarCiclista(brasileiro);
-            return ResponseEntity.ok(novoCiclista);
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
-    }
+	@PostMapping("/brasileiro")
+	public ResponseEntity<Ciclista> cadastrarBrasileiro(@Valid @RequestBody Brasileiro brasileiro) {
+		try {
+			Ciclista novoCiclista = ciclistaService.cadastrarCiclista(brasileiro);
+			return ResponseEntity.ok(novoCiclista);
+		} catch (RuntimeException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
 
-    @PostMapping("/estrangeiro")
-    public ResponseEntity<Ciclista> cadastrarEstrangeiro(@Valid @RequestBody Estrangeiro estrangeiro) {
-        try {
-            Ciclista novoCiclista = ciclistaService.cadastrarCiclista(estrangeiro);
-            return ResponseEntity.ok(novoCiclista);
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
-    }
-    
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO loginDTO) {
-        try {
-            LoginResponseDTO response = ciclistaService.realizarLogin(loginDTO.getEmail(), loginDTO.getSenha());
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciais inválidas");
-        }
-    }
+	@PostMapping("/estrangeiro")
+	public ResponseEntity<Ciclista> cadastrarEstrangeiro(@Valid @RequestBody Estrangeiro estrangeiro) {
+		try {
+			Ciclista novoCiclista = ciclistaService.cadastrarCiclista(estrangeiro);
+			return ResponseEntity.ok(novoCiclista);
+		} catch (RuntimeException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
 
-    @GetMapping("/{identificacao}")
-    public ResponseEntity<Ciclista> buscarCiclista(@PathVariable String identificacao) {
-        try {
-            Ciclista ciclista = ciclistaService.buscarCiclista(identificacao);
-            return ResponseEntity.ok(ciclista);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+	@PostMapping("/login")
+	public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO loginDTO) {
+		try {
+			LoginResponseDTO response = ciclistaService.realizarLogin(loginDTO.getEmail(), loginDTO.getSenha());
+			return ResponseEntity.ok(response);
+		} catch (RuntimeException e) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciais inválidas");
+		}
+	}
 
-    @PutMapping("/{identificacao}")
-    public ResponseEntity<Ciclista> atualizarCiclista(@PathVariable String identificacao, @RequestBody CiclistaAtualizacaoDTO atualizacaoDTO) {
-        try {
-            Ciclista ciclistaAtualizado = ciclistaService.atualizarCiclista(identificacao, atualizacaoDTO);
-            return ResponseEntity.ok(ciclistaAtualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-    
-    @PostMapping("/{identificacao}/cartoes")
-    public ResponseEntity<CartaoCreditoDTO> adicionarCartaoCredito(
-            @PathVariable String identificacao, 
-            @Valid @RequestBody CartaoCreditoDTO cartaoDTO) {
-        try {
-            CartaoCreditoDTO novoCartao = ciclistaService.adicionarCartaoCredito(identificacao, cartaoDTO);
-            return ResponseEntity.ok(novoCartao);
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
-    }
+	@GetMapping("/{identificacao}")
+	public ResponseEntity<Ciclista> buscarCiclista(@PathVariable String identificacao) {
+		try {
+			Ciclista ciclista = ciclistaService.buscarCiclista(identificacao);
+			return ResponseEntity.ok(ciclista);
+		} catch (RuntimeException e) {
+			return ResponseEntity.notFound().build();
+		}
+	}
 
-    @DeleteMapping("/{identificacao}/cartoes/{cartaoId}")
-    public ResponseEntity<Void> removerCartaoCredito(@PathVariable String identificacao, @PathVariable Long cartaoId) {
-        try {
-            ciclistaService.removerCartaoCredito(identificacao, cartaoId);
-            return ResponseEntity.ok().build();
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-    }
+	@PutMapping("/{identificacao}")
+	public ResponseEntity<Ciclista> atualizarCiclista(@PathVariable String identificacao,
+			@RequestBody CiclistaAtualizacaoDTO atualizacaoDTO) {
+		try {
+			Ciclista ciclistaAtualizado = ciclistaService.atualizarCiclista(identificacao, atualizacaoDTO);
+			return ResponseEntity.ok(ciclistaAtualizado);
+		} catch (RuntimeException e) {
+			return ResponseEntity.notFound().build();
+		}
+	}
 
-    @PutMapping("/{identificacao}/cartoes/{cartaoId}/principal")
-    public ResponseEntity<Void> definirCartaoPrincipal(@PathVariable String identificacao, @PathVariable Long cartaoId) {
-        try {
-            ciclistaService.definirCartaoPrincipal(identificacao, cartaoId);
-            return ResponseEntity.ok().build();
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-    }
-    
-    @GetMapping("/{identificacao}/cartoes")
-    public ResponseEntity<List<CartaoCredito>> listarCartoes(@PathVariable String identificacao) {
-        try {
-            List<CartaoCredito> cartoes = ciclistaService.listarCartoes(identificacao);
-            return ResponseEntity.ok(cartoes);
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-    }
-    
-    @GetMapping("/{identificacao}/emprestimos")
-    public ResponseEntity<List<EmprestimoDTO>> buscarHistoricoEmprestimos(@PathVariable String identificacao) {
-        try {
-            System.out.println("Requisição de histórico de empréstimos para identificação: " + identificacao);
-            List<Emprestimo> emprestimos = ciclistaService.buscarHistoricoEmprestimos(identificacao);
-            List<EmprestimoDTO> emprestimosDTO = emprestimos.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-            System.out.println("Número de empréstimos convertidos para DTO: " + emprestimosDTO.size());
-            return ResponseEntity.ok(emprestimosDTO);
-        } catch (RuntimeException e) {
-            System.out.println("Erro ao buscar histórico de empréstimos: " + e.getMessage());
-            return ResponseEntity.notFound().build();
-        }
-    }
-    
-    private EmprestimoDTO convertToDTO(Emprestimo emprestimo) {
-        EmprestimoDTO dto = new EmprestimoDTO();
-        dto.setId(emprestimo.getId());
-        dto.setCiclistaId(emprestimo.getCiclista().getId());
-        dto.setBicicletaId(emprestimo.getBicicleta().getId());
-        dto.setTrancaInicioId(emprestimo.getTrancaInicio().getId());
-        dto.setTotemInicioId(emprestimo.getTotemInicio().getId());
-        dto.setHoraInicio(emprestimo.getHoraInicio());
-        dto.setTaxaInicial(emprestimo.getTaxaInicial());
-        dto.setStatus(emprestimo.getStatus().toString());
+	@PostMapping("/{identificacao}/cartoes")
+	public ResponseEntity<CartaoCreditoDTO> adicionarCartaoCredito(@PathVariable String identificacao,
+			@Valid @RequestBody CartaoCreditoDTO cartaoDTO) {
+		try {
+			CartaoCreditoDTO novoCartao = ciclistaService.adicionarCartaoCredito(identificacao, cartaoDTO);
+			return ResponseEntity.ok(novoCartao);
+		} catch (RuntimeException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
 
-        // Campos opcionais que podem ser null
-        if (emprestimo.getTrancaFim() != null) {
-            dto.setTrancaFimId(emprestimo.getTrancaFim().getId());
-        }
-        if (emprestimo.getTotemFim() != null) {
-            dto.setTotemFimId(emprestimo.getTotemFim().getId());
-        }
-        dto.setHoraFim(emprestimo.getHoraFim());
-        dto.setTaxaExtra(emprestimo.getTaxaExtra());
+	@DeleteMapping("/{identificacao}/cartoes/{cartaoId}")
+	public ResponseEntity<Void> removerCartaoCredito(@PathVariable String identificacao, @PathVariable Long cartaoId) {
+		try {
+			ciclistaService.removerCartaoCredito(identificacao, cartaoId);
+			return ResponseEntity.ok().build();
+		} catch (RuntimeException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		}
+	}
 
-        return dto;
-    }
-    
+	@PutMapping("/{identificacao}/cartoes/{cartaoId}/principal")
+	public ResponseEntity<Void> definirCartaoPrincipal(@PathVariable String identificacao,
+			@PathVariable Long cartaoId) {
+		try {
+			ciclistaService.definirCartaoPrincipal(identificacao, cartaoId);
+			return ResponseEntity.ok().build();
+		} catch (RuntimeException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		}
+	}
+
+	@GetMapping("/{identificacao}/cartoes")
+	public ResponseEntity<List<CartaoCredito>> listarCartoes(@PathVariable String identificacao) {
+		try {
+			List<CartaoCredito> cartoes = ciclistaService.listarCartoes(identificacao);
+			return ResponseEntity.ok(cartoes);
+		} catch (RuntimeException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		}
+	}
+
+	@GetMapping("/{identificacao}/emprestimos")
+	public ResponseEntity<List<EmprestimoDTO>> buscarHistoricoEmprestimos(@PathVariable String identificacao) {
+		try {
+			System.out.println("Requisição de histórico de empréstimos para identificação: " + identificacao);
+			List<Emprestimo> emprestimos = ciclistaService.buscarHistoricoEmprestimos(identificacao);
+			List<EmprestimoDTO> emprestimosDTO = emprestimos.stream().map(this::convertToDTO)
+					.collect(Collectors.toList());
+			System.out.println("Número de empréstimos convertidos para DTO: " + emprestimosDTO.size());
+			return ResponseEntity.ok(emprestimosDTO);
+		} catch (RuntimeException e) {
+			System.out.println("Erro ao buscar histórico de empréstimos: " + e.getMessage());
+			return ResponseEntity.notFound().build();
+		}
+	}
+
+	private EmprestimoDTO convertToDTO(Emprestimo emprestimo) {
+		EmprestimoDTO dto = new EmprestimoDTO();
+		dto.setId(emprestimo.getId());
+		dto.setCiclistaId(emprestimo.getCiclista().getId());
+		dto.setBicicletaId(emprestimo.getBicicleta().getId());
+		dto.setTrancaInicioId(emprestimo.getTrancaInicio().getId());
+		dto.setTotemInicioId(emprestimo.getTotemInicio().getId());
+		dto.setHoraInicio(emprestimo.getHoraInicio());
+		dto.setTaxaInicial(emprestimo.getTaxaInicial());
+		dto.setStatus(emprestimo.getStatus().toString());
+
+		// Campos opcionais que podem ser null
+		if (emprestimo.getTrancaFim() != null) {
+			dto.setTrancaFimId(emprestimo.getTrancaFim().getId());
+		}
+		if (emprestimo.getTotemFim() != null) {
+			dto.setTotemFimId(emprestimo.getTotemFim().getId());
+		}
+		dto.setHoraFim(emprestimo.getHoraFim());
+		dto.setTaxaExtra(emprestimo.getTaxaExtra());
+
+		return dto;
+	}
+
 }

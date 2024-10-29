@@ -10,30 +10,30 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 public class Bicicleta {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private String modelo;
-    private String marca;
-    private Integer ano;
-    private String numero;
+	private String modelo;
+	private String marca;
+	private Integer ano;
+	private String numero;
 
-    @Enumerated(EnumType.STRING)
-    private StatusBicicleta status;
+	@Enumerated(EnumType.STRING)
+	private StatusBicicleta status;
 
-    @OneToOne(mappedBy = "bicicleta")
-    private Tranca tranca;
+	@OneToOne(mappedBy = "bicicleta")
+	private Tranca tranca;
 
-    // Getters e Setters
-    public Long getId() {
-        return id;
-    }
+	// Getters e Setters
+	public Long getId() {
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public String getModelo() {
 		return modelo;
 	}
@@ -65,12 +65,12 @@ public class Bicicleta {
 	public void setNumero(String numero) {
 		this.numero = numero;
 	}
-	
-	public StatusBicicleta getStatus() {
-        return status;
-    }
 
-    public void setStatus(StatusBicicleta  status) {
-        this.status = status;
-    }
+	public StatusBicicleta getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusBicicleta status) {
+		this.status = status;
+	}
 }

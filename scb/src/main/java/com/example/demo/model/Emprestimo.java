@@ -13,47 +13,47 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class Emprestimo {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @NotNull(message = "Ciclista é obrigatório")
-    @ManyToOne
-    @JoinColumn(name = "ciclista_id", nullable = false)
-    private Ciclista ciclista;
+	@NotNull(message = "Ciclista é obrigatório")
+	@ManyToOne
+	@JoinColumn(name = "ciclista_id", nullable = false)
+	private Ciclista ciclista;
 
-    @NotNull(message = "Bicicleta é obrigatória")
-    @ManyToOne
-    @JoinColumn(name = "bicicleta_id", nullable = false)
-    private Bicicleta bicicleta;
+	@NotNull(message = "Bicicleta é obrigatória")
+	@ManyToOne
+	@JoinColumn(name = "bicicleta_id", nullable = false)
+	private Bicicleta bicicleta;
 
-    @NotNull(message = "Tranca inicial é obrigatória")
-    @ManyToOne
-    @JoinColumn(name = "tranca_inicio_id", nullable = false)
-    private Tranca trancaInicio;
+	@NotNull(message = "Tranca inicial é obrigatória")
+	@ManyToOne
+	@JoinColumn(name = "tranca_inicio_id", nullable = false)
+	private Tranca trancaInicio;
 
-    @NotNull(message = "Totem inicial é obrigatório")
-    @ManyToOne
-    @JoinColumn(name = "totem_inicio_id", nullable = false)
-    private Totem totemInicio;
+	@NotNull(message = "Totem inicial é obrigatório")
+	@ManyToOne
+	@JoinColumn(name = "totem_inicio_id", nullable = false)
+	private Totem totemInicio;
 
-    private LocalDateTime horaInicio;
+	private LocalDateTime horaInicio;
 
-    @ManyToOne
-    @JoinColumn(name = "tranca_fim_id")
-    private Tranca trancaFim;
+	@ManyToOne
+	@JoinColumn(name = "tranca_fim_id")
+	private Tranca trancaFim;
 
-    @ManyToOne
-    @JoinColumn(name = "totem_fim_id")
-    private Totem totemFim;
+	@ManyToOne
+	@JoinColumn(name = "totem_fim_id")
+	private Totem totemFim;
 
-    private LocalDateTime horaFim;
+	private LocalDateTime horaFim;
 
-    private Double taxaInicial;
-    private Double taxaExtra;
+	private Double taxaInicial;
+	private Double taxaExtra;
 
-    @Enumerated(EnumType.STRING)
-    private StatusEmprestimo status;
+	@Enumerated(EnumType.STRING)
+	private StatusEmprestimo status;
 
 	public Long getId() {
 		return id;

@@ -10,8 +10,11 @@ import java.util.Optional;
 
 @Repository
 public interface TrancaRepository extends JpaRepository<Tranca, Long> {
-    Optional<Tranca> findByNumero(String numero);
-    List<Tranca> findByStatus(StatusTranca status);
-    List<Tranca> findByTotemId(Long totemId);
-    boolean existsByNumero(String numero);
+	Optional<Tranca> findByNumero(String numero);
+
+	List<Tranca> findByStatus(StatusTranca status);
+
+	List<Tranca> findByTotemId(Long totemId);
+
+	boolean existsByNumero(String numero);
 }

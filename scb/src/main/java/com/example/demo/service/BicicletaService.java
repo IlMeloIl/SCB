@@ -13,44 +13,44 @@ import java.util.Optional;
 @Service
 public class BicicletaService {
 
-    @Autowired
-    private BicicletaRepository bicicletaRepository;
+	@Autowired
+	private BicicletaRepository bicicletaRepository;
 
-    public List<Bicicleta> listarTodas() {
-        return bicicletaRepository.findAll();
-    }
+	public List<Bicicleta> listarTodas() {
+		return bicicletaRepository.findAll();
+	}
 
-    public Optional<Bicicleta> buscarPorId(Long id) {
-        return bicicletaRepository.findById(id);
-    }
+	public Optional<Bicicleta> buscarPorId(Long id) {
+		return bicicletaRepository.findById(id);
+	}
 
-    public Optional<Bicicleta> buscarPorNumero(String numero) {
-        return bicicletaRepository.findByNumero(numero);
-    }
+	public Optional<Bicicleta> buscarPorNumero(String numero) {
+		return bicicletaRepository.findByNumero(numero);
+	}
 
-    @Transactional
-    public Bicicleta salvar(Bicicleta bicicleta) {
-        return bicicletaRepository.save(bicicleta);
-    }
+	@Transactional
+	public Bicicleta salvar(Bicicleta bicicleta) {
+		return bicicletaRepository.save(bicicleta);
+	}
 
-    @Transactional
-    public void deletar(Long id) {
-        bicicletaRepository.deleteById(id);
-    }
+	@Transactional
+	public void deletar(Long id) {
+		bicicletaRepository.deleteById(id);
+	}
 
-    public List<Bicicleta> buscarPorStatus(StatusBicicleta status) {
-        return bicicletaRepository.findByStatus(status);
-    }
+	public List<Bicicleta> buscarPorStatus(StatusBicicleta status) {
+		return bicicletaRepository.findByStatus(status);
+	}
 
-    @Transactional
-    public boolean atualizarStatus(Long id, StatusBicicleta novoStatus) {
-        Optional<Bicicleta> bicicletaOpt = bicicletaRepository.findById(id);
-        if (bicicletaOpt.isPresent()) {
-            Bicicleta bicicleta = bicicletaOpt.get();
-            bicicleta.setStatus(novoStatus);
-            bicicletaRepository.save(bicicleta);
-            return true;
-        }
-        return false;
-    }
+	@Transactional
+	public boolean atualizarStatus(Long id, StatusBicicleta novoStatus) {
+		Optional<Bicicleta> bicicletaOpt = bicicletaRepository.findById(id);
+		if (bicicletaOpt.isPresent()) {
+			Bicicleta bicicleta = bicicletaOpt.get();
+			bicicleta.setStatus(novoStatus);
+			bicicletaRepository.save(bicicleta);
+			return true;
+		}
+		return false;
+	}
 }

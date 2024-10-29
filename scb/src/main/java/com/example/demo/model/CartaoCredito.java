@@ -14,85 +14,85 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 public class CartaoCredito {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "ciclista_id")
-    private Ciclista ciclista;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @NotBlank(message = "Número do cartão é obrigatório")
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "ciclista_id")
+	private Ciclista ciclista;
+
+	@NotBlank(message = "Número do cartão é obrigatório")
 	@Pattern(regexp = "^\\d{16}$", message = "Número do cartão deve ter 16 dígitos")
-    private String numero;
-    
-    @NotBlank(message = "Nome do titular é obrigatório")
-    private String nomeTitular;
-    
-    @NotBlank(message = "Validade é obrigatória")
-    @Pattern(regexp = "^(0[1-9]|1[0-2])/([0-9]{2})$", message = "Validade deve estar no formato MM/YY")
-    private String validade;
-    
-    @NotBlank(message = "CVV é obrigatório")
-    @Pattern(regexp = "^[0-9]{3,4}$", message = "CVV deve ter 3 ou 4 dígitos")
-    private String cvv;
-    private boolean principal = false;
-    
-    // Getters e Setters
-    public Long getId() {
-        return id;
-    }
+	private String numero;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@NotBlank(message = "Nome do titular é obrigatório")
+	private String nomeTitular;
 
-    public Ciclista getCiclista() {
+	@NotBlank(message = "Validade é obrigatória")
+	@Pattern(regexp = "^(0[1-9]|1[0-2])/([0-9]{2})$", message = "Validade deve estar no formato MM/YY")
+	private String validade;
+
+	@NotBlank(message = "CVV é obrigatório")
+	@Pattern(regexp = "^[0-9]{3,4}$", message = "CVV deve ter 3 ou 4 dígitos")
+	private String cvv;
+	private boolean principal = false;
+
+	// Getters e Setters
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Ciclista getCiclista() {
 		return ciclista;
 	}
 
 	public void setCiclista(Ciclista ciclista) {
 		this.ciclista = ciclista;
 	}
-    
-    public String getNumero() {
-        return numero;
-    }
 
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
+	public String getNumero() {
+		return numero;
+	}
 
-    public String getNomeTitular() {
-        return nomeTitular;
-    }
+	public void setNumero(String numero) {
+		this.numero = numero;
+	}
 
-    public void setNomeTitular(String nomeTitular) {
-        this.nomeTitular = nomeTitular;
-    }
+	public String getNomeTitular() {
+		return nomeTitular;
+	}
 
-    public String getValidade() {
-        return validade;
-    }
+	public void setNomeTitular(String nomeTitular) {
+		this.nomeTitular = nomeTitular;
+	}
 
-    public void setValidade(String validade) {
-        this.validade = validade;
-    }
+	public String getValidade() {
+		return validade;
+	}
 
-    public String getCvv() {
-        return cvv;
-    }
+	public void setValidade(String validade) {
+		this.validade = validade;
+	}
 
-    public void setCvv(String cvv) {
-        this.cvv = cvv;
-    }
+	public String getCvv() {
+		return cvv;
+	}
 
-    public boolean isPrincipal() {
-        return principal;
-    }
+	public void setCvv(String cvv) {
+		this.cvv = cvv;
+	}
 
-    public void setPrincipal(boolean principal) {
-        this.principal = principal;
-    }
+	public boolean isPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(boolean principal) {
+		this.principal = principal;
+	}
 }

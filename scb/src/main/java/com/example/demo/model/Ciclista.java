@@ -23,119 +23,119 @@ import jakarta.validation.constraints.Size;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_ciclista")
 public abstract class Ciclista {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    @NotBlank(message = "O nome não pode estar em branco")
-    private String nome;
-    
-    @NotBlank(message = "A data de nascimento não pode estar em branco")
-    @Pattern(regexp = "\\d{2}/\\d{2}/\\d{4}", message = "Data de nascimento deve estar no formato dd/mm/aaaa")
-    private String nascimento;
-    
-    @Email(message = "Email deve ser válido")
-    @NotBlank(message = "Email não pode estar em branco")
-    private String email;
-    
-    @NotBlank(message = "A senha não pode estar em branco")
-    @Size(min = 1, message = "A senha deve ter pelo menos 1 caractere")
-    private String senha;
-    
-    @NotBlank(message = "O telefone não pode estar em branco")
-    @Pattern(regexp = "\\d{10,11}", message = "Telefone deve conter 10 ou 11 dígitos")
-    private String telefone;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private LocalDateTime dataCadastro;
+	@NotBlank(message = "O nome não pode estar em branco")
+	private String nome;
 
-    @Valid
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CartaoCredito> cartoes = new ArrayList<>();
+	@NotBlank(message = "A data de nascimento não pode estar em branco")
+	@Pattern(regexp = "\\d{2}/\\d{2}/\\d{4}", message = "Data de nascimento deve estar no formato dd/mm/aaaa")
+	private String nascimento;
 
-    @NotNull(message = "Status do ciclista não pode ser nulo")
-    @Enumerated(EnumType.STRING)
-    private StatusCiclista status = StatusCiclista.ATIVO;
+	@Email(message = "Email deve ser válido")
+	@NotBlank(message = "Email não pode estar em branco")
+	private String email;
 
-    // Getters e Setters
-    public Long getId() {
-        return id;
-    }
+	@NotBlank(message = "A senha não pode estar em branco")
+	@Size(min = 1, message = "A senha deve ter pelo menos 1 caractere")
+	private String senha;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@NotBlank(message = "O telefone não pode estar em branco")
+	@Pattern(regexp = "\\d{10,11}", message = "Telefone deve conter 10 ou 11 dígitos")
+	private String telefone;
 
-    public String getNome() {
-        return nome;
-    }
+	private LocalDateTime dataCadastro;
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+	@Valid
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<CartaoCredito> cartoes = new ArrayList<>();
 
-    public String getNascimento() {
-        return nascimento;
-    }
+	@NotNull(message = "Status do ciclista não pode ser nulo")
+	@Enumerated(EnumType.STRING)
+	private StatusCiclista status = StatusCiclista.ATIVO;
 
-    public void setNascimento(String nascimento) {
-        this.nascimento = nascimento;
-    }
+	// Getters e Setters
+	public Long getId() {
+		return id;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public String getNome() {
+		return nome;
+	}
 
-    public String getSenha() {
-        return senha;
-    }
-    
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-    
-    public String getTelefone() {
-        return telefone;
-    }
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
 
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
+	public String getNascimento() {
+		return nascimento;
+	}
 
-    public LocalDateTime getDataCadastro() {
-        return dataCadastro;
-    }
+	public void setNascimento(String nascimento) {
+		this.nascimento = nascimento;
+	}
 
-    public void setDataCadastro(LocalDateTime dataCadastro) {
-        this.dataCadastro = dataCadastro;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public List<CartaoCredito> getCartoes() {
-        return cartoes;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public void setCartoes(List<CartaoCredito> cartoes) {
-        this.cartoes = cartoes;
-    }
+	public String getSenha() {
+		return senha;
+	}
 
-    public StatusCiclista getStatus() {
-        return status;
-    }
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
 
-    public void setStatus(StatusCiclista status) {
-        this.status = status;
-    }
+	public String getTelefone() {
+		return telefone;
+	}
 
-    // Métodos
-    public void adicionarCartao(CartaoCredito cartao) {
-        this.cartoes.add(cartao);
-    }
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
+	}
 
-    public void removerCartao(CartaoCredito cartao) {
-        this.cartoes.remove(cartao);
-    }
-    
+	public LocalDateTime getDataCadastro() {
+		return dataCadastro;
+	}
+
+	public void setDataCadastro(LocalDateTime dataCadastro) {
+		this.dataCadastro = dataCadastro;
+	}
+
+	public List<CartaoCredito> getCartoes() {
+		return cartoes;
+	}
+
+	public void setCartoes(List<CartaoCredito> cartoes) {
+		this.cartoes = cartoes;
+	}
+
+	public StatusCiclista getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusCiclista status) {
+		this.status = status;
+	}
+
+	// Métodos
+	public void adicionarCartao(CartaoCredito cartao) {
+		this.cartoes.add(cartao);
+	}
+
+	public void removerCartao(CartaoCredito cartao) {
+		this.cartoes.remove(cartao);
+	}
+
 }

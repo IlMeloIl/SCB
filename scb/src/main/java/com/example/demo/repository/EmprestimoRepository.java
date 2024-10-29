@@ -10,6 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface EmprestimoRepository extends JpaRepository<Emprestimo, Long> {
-    Optional<Emprestimo> findByCiclistaIdAndStatus(Long ciclistaId, StatusEmprestimo status);
-    List<Emprestimo> findByCiclistaId(Long ciclistaId);
+	Optional<Emprestimo> findByCiclistaIdAndStatus(Long ciclistaId, StatusEmprestimo status);
+
+	List<Emprestimo> findByCiclistaId(Long ciclistaId);
 }

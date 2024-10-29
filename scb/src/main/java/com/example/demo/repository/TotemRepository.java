@@ -8,6 +8,7 @@ import java.util.List;
 
 @Repository
 public interface TotemRepository extends JpaRepository<Totem, Long> {
-    List<Totem> findByLocalizacao(String localizacao);
-    List<Totem> findByCapacidadeMaxima(Integer capacidadeMaxima);
+	List<Totem> findByLocalizacao(String localizacao);
+
+	List<Totem> findByCapacidadeMaxima(Integer capacidadeMaxima);
 }

@@ -14,78 +14,78 @@ import java.util.List;
 @Service
 public class CartaoCreditoService {
 
-    @Autowired
-    private CartaoCreditoRepository cartaoCreditoRepository;
-    
-    @Autowired
-    private CiclistaRepository ciclistaRepository;
+	@Autowired
+	private CartaoCreditoRepository cartaoCreditoRepository;
 
-    @Transactional
-    public boolean realizarCobranca(Ciclista ciclista, double valor) {
-        CartaoCredito cartaoPrincipal = obterCartaoPrincipal(ciclista);
-        if (cartaoPrincipal == null) {
-            throw new RuntimeException("Ciclista não possui cartão de crédito principal");
-        }
-        boolean cobrancaRealizada = processarCobranca(cartaoPrincipal, valor);
-        if (cobrancaRealizada) {
-            registrarCobranca(ciclista, cartaoPrincipal, valor);
-        }
-        return cobrancaRealizada;
-    }
+	@Autowired
+	private CiclistaRepository ciclistaRepository;
 
-    private CartaoCredito obterCartaoPrincipal(Ciclista ciclista) {
-        return cartaoCreditoRepository.findByCiclistaAndPrincipal(ciclista, true)
-                .orElseThrow(() -> new RuntimeException("Cartão principal não encontrado"));
-    }
+	@Transactional
+	public boolean realizarCobranca(Ciclista ciclista, double valor) {
+		CartaoCredito cartaoPrincipal = obterCartaoPrincipal(ciclista);
+		if (cartaoPrincipal == null) {
+			throw new RuntimeException("Ciclista não possui cartão de crédito principal");
+		}
+		boolean cobrancaRealizada = processarCobranca(cartaoPrincipal, valor);
+		if (cobrancaRealizada) {
+			registrarCobranca(ciclista, cartaoPrincipal, valor);
+		}
+		return cobrancaRealizada;
+	}
 
-    private boolean processarCobranca(CartaoCredito cartao, double valor) {
-        // Simulação de processamento de cobrança
-        System.out.println("Processando cobrança de R$" + valor + " no cartão " + cartao.getNumero());
-        
-        return true;
-    }
+	private CartaoCredito obterCartaoPrincipal(Ciclista ciclista) {
+		return cartaoCreditoRepository.findByCiclistaAndPrincipal(ciclista, true)
+				.orElseThrow(() -> new RuntimeException("Cartão principal não encontrado"));
+	}
 
-    private void registrarCobranca(Ciclista ciclista, CartaoCredito cartao, double valor) {
-        System.out.println("Cobrança de R$" + valor + " realizada para o ciclista " + ciclista.getNome() +
-                " no cartão " + cartao.getNumero() + " em " + LocalDateTime.now());
-    }
+	private boolean processarCobranca(CartaoCredito cartao, double valor) {
+		// Simulação de processamento de cobrança
+		System.out.println("Processando cobrança de R$" + valor + " no cartão " + cartao.getNumero());
 
-    @Transactional
-    public CartaoCredito adicionarCartao(Long ciclistaId, CartaoCredito cartao) {
-        Ciclista ciclista = ciclistaRepository.findById(ciclistaId)
-                .orElseThrow(() -> new RuntimeException("Ciclista não encontrado"));
+		return true;
+	}
 
-        cartao.setCiclista(ciclista);
-        
-        if (cartao.isPrincipal()) {
-            cartaoCreditoRepository.findByCiclista(ciclista).forEach(c -> c.setPrincipal(false));
-        }
+	private void registrarCobranca(Ciclista ciclista, CartaoCredito cartao, double valor) {
+		System.out.println("Cobrança de R$" + valor + " realizada para o ciclista " + ciclista.getNome() + " no cartão "
+				+ cartao.getNumero() + " em " + LocalDateTime.now());
+	}
 
-        return cartaoCreditoRepository.save(cartao);
-    }
+	@Transactional
+	public CartaoCredito adicionarCartao(Long ciclistaId, CartaoCredito cartao) {
+		Ciclista ciclista = ciclistaRepository.findById(ciclistaId)
+				.orElseThrow(() -> new RuntimeException("Ciclista não encontrado"));
 
-    @Transactional
-    public void removerCartao(Long ciclistaId, Long cartaoId) {
-        Ciclista ciclista = ciclistaRepository.findById(ciclistaId)
-                .orElseThrow(() -> new RuntimeException("Ciclista não encontrado"));
+		cartao.setCiclista(ciclista);
 
-        ciclista.getCartoes().removeIf(c -> c.getId().equals(cartaoId));
-        ciclistaRepository.save(ciclista);
-    }
+		if (cartao.isPrincipal()) {
+			cartaoCreditoRepository.findByCiclista(ciclista).forEach(c -> c.setPrincipal(false));
+		}
 
-    @Transactional
-    public void definirCartaoPrincipal(Long ciclistaId, Long cartaoId) {
-        Ciclista ciclista = ciclistaRepository.findById(ciclistaId)
-                .orElseThrow(() -> new RuntimeException("Ciclista não encontrado"));
+		return cartaoCreditoRepository.save(cartao);
+	}
 
-        ciclista.getCartoes().forEach(c -> c.setPrincipal(c.getId().equals(cartaoId)));
-        ciclistaRepository.save(ciclista);
-    }
+	@Transactional
+	public void removerCartao(Long ciclistaId, Long cartaoId) {
+		Ciclista ciclista = ciclistaRepository.findById(ciclistaId)
+				.orElseThrow(() -> new RuntimeException("Ciclista não encontrado"));
 
-    public List<CartaoCredito> listarCartoes(Long ciclistaId) {
-        Ciclista ciclista = ciclistaRepository.findById(ciclistaId)
-                .orElseThrow(() -> new RuntimeException("Ciclista não encontrado"));
-        return cartaoCreditoRepository.findByCiclista(ciclista);
-    }
-      
+		ciclista.getCartoes().removeIf(c -> c.getId().equals(cartaoId));
+		ciclistaRepository.save(ciclista);
+	}
+
+	@Transactional
+	public void definirCartaoPrincipal(Long ciclistaId, Long cartaoId) {
+		Ciclista ciclista = ciclistaRepository.findById(ciclistaId)
+				.orElseThrow(() -> new RuntimeException("Ciclista não encontrado"));
+
+		ciclista.getCartoes().forEach(c -> c.setPrincipal(c.getId().equals(cartaoId)));
+		ciclistaRepository.save(ciclista);
+	}
+
+	public List<CartaoCredito> listarCartoes(Long ciclistaId) {
+		Ciclista ciclista = ciclistaRepository.findById(ciclistaId)
+				.orElseThrow(() -> new RuntimeException("Ciclista não encontrado"));
+		return cartaoCreditoRepository.findByCiclista(ciclista);
+	}
+
 }
