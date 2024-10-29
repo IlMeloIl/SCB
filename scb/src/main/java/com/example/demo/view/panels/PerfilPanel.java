@@ -71,19 +71,39 @@ public class PerfilPanel extends JPanel {
 
         // Painel principal com divisão vertical
         JSplitPane mainSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        mainSplitPane.setDividerLocation(350);
+        mainSplitPane.setDividerLocation(200);
+        mainSplitPane.setResizeWeight(0.3);
 
-        // Painel superior dividido horizontalmente
+        // Painel superior com divisão horizontal
         JSplitPane topSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        topSplitPane.setDividerLocation(400);
+        
+        // Painéis de informações e cartões com mesmo tamanho
+        JPanel infoPanel = setupInfoPanel();
+        JPanel cartoesPanel = setupCartoesPanel();
+        
+        // Definir tamanhos preferidos iguais
+        Dimension preferredSize = new Dimension(400, 200);
+        infoPanel.setPreferredSize(preferredSize);
+        cartoesPanel.setPreferredSize(preferredSize);
+        
+        topSplitPane.setLeftComponent(infoPanel);
+        topSplitPane.setRightComponent(cartoesPanel);
+        
+        // Configurar a divisão exatamente no meio
+        topSplitPane.setResizeWeight(0.5);
+        
+        // Configurar o tamanho inicial da divisão
+        SwingUtilities.invokeLater(() -> {
+            int width = topSplitPane.getWidth();
+            topSplitPane.setDividerLocation(width / 2);
+        });
 
-        // Adiciona painéis de informações e cartões
-        topSplitPane.setLeftComponent(setupInfoPanel());
-        topSplitPane.setRightComponent(setupCartoesPanel());
+        // Adiciona o histórico
+        JPanel historicoPanel = setupHistoricoPanel();
 
-        // Adiciona o painel superior e o histórico ao split principal
+        // Configura o split principal
         mainSplitPane.setTopComponent(topSplitPane);
-        mainSplitPane.setBottomComponent(setupHistoricoPanel());
+        mainSplitPane.setBottomComponent(historicoPanel);
 
         add(headerPanel, BorderLayout.NORTH);
         add(mainSplitPane, BorderLayout.CENTER);

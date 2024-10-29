@@ -43,9 +43,11 @@ public class WindowManager {
     private DashboardPanel dashboardPanel;
     private TotemListPanel totemListPanel;
     private EmprestimoPanel emprestimoPanel;
-//    private DevolucaoPanel devolucaoPanel;
+    private DevolucaoPanel devolucaoPanel;
     private PerfilPanel perfilPanel;
 
+    private Long currentEmprestimoId;
+    
     public WindowManager(ApplicationContext springContext) {
         this.springContext = springContext;
         initializeControllers();
@@ -77,7 +79,7 @@ public class WindowManager {
         dashboardPanel = new DashboardPanel(this, ciclistaController);
         totemListPanel = new TotemListPanel(this, totemController);
         emprestimoPanel = new EmprestimoPanel(this, emprestimoController, totemController, ciclistaController);
-//        devolucaoPanel = new DevolucaoPanel(this, emprestimoController);
+        devolucaoPanel = new DevolucaoPanel(this, emprestimoController, totemController);
         perfilPanel = new PerfilPanel(this, ciclistaController);
     }
 
@@ -87,7 +89,7 @@ public class WindowManager {
         contentPanel.add(dashboardPanel, DASHBOARD_PANEL);
         contentPanel.add(totemListPanel, TOTEM_LIST_PANEL);
         contentPanel.add(emprestimoPanel, EMPRESTIMO_PANEL);
-//        contentPanel.add(devolucaoPanel, DEVOLUCAO_PANEL);
+        contentPanel.add(devolucaoPanel, DEVOLUCAO_PANEL);
         contentPanel.add(perfilPanel, PERFIL_PANEL);
     }
 
@@ -136,6 +138,7 @@ public class WindowManager {
         }
         cardLayout.show(contentPanel, DEVOLUCAO_PANEL);
         mainFrame.setTitle("SCB - Devolução");
+        devolucaoPanel.carregarDados(); 
     }
     
     public void showPerfil() {
@@ -195,6 +198,14 @@ public class WindowManager {
         return currentBikeInfo;
     }
 
+    public void setCurrentEmprestimoId(Long emprestimoId) {
+        this.currentEmprestimoId = emprestimoId;
+    }
+    
+    public Long getCurrentEmprestimoId() {
+        return currentEmprestimoId;
+    }
+    
     // Métodos de utilidade
     public void showError(String message) {
         JOptionPane.showMessageDialog(

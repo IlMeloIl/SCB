@@ -246,8 +246,9 @@ public class EmprestimoPanel extends JPanel {
                 ResponseEntity<EmprestimoDTO> response = emprestimoController.realizarEmprestimo(requestDTO);
                 
                 if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                    // Atualizar status no WindowManager
+                    EmprestimoDTO emprestimo = response.getBody();
                     windowManager.updateEmprestimoStatus(true, "Bicicleta " + numeroBicicleta);
+                    windowManager.setCurrentEmprestimoId(emprestimo.getId());  // Salvar o ID
                     windowManager.showSuccess("Empréstimo realizado com sucesso!");
                     windowManager.showDashboard();
                 }

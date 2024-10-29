@@ -142,7 +142,7 @@ public class EmprestimoService {
         return convertToDTO(emprestimo);
     }
 
-    private EmprestimoDTO convertToDTO(Emprestimo emprestimo) {
+    public EmprestimoDTO convertToDTO(Emprestimo emprestimo) {
         EmprestimoDTO dto = new EmprestimoDTO();
         dto.setId(emprestimo.getId());
         dto.setCiclistaId(emprestimo.getCiclista().getId());
