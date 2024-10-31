@@ -183,42 +183,48 @@ public class DevolucaoPanel extends JPanel {
 	}
 
 	private void realizarDevolucao() {
-		int selectedRow = trancasTable.getSelectedRow();
-		if (selectedRow == -1) {
-			windowManager.showError("Selecione uma tranca para devolver a bicicleta");
-			return;
-		}
+	    int selectedRow = trancasTable.getSelectedRow();
+	    if (selectedRow == -1) {
+	        windowManager.showError("Selecione uma tranca para devolver a bicicleta");
+	        return;
+	    }
 
-		try {
-			String numeroTranca = (String) trancasTableModel.getValueAt(selectedRow, 0);
-			TotemComboItem selectedTotem = (TotemComboItem) totemComboBox.getSelectedItem();
+	    try {
+	        String numeroTranca = (String) trancasTableModel.getValueAt(selectedRow, 0);
+	        TotemComboItem selectedTotem = (TotemComboItem) totemComboBox.getSelectedItem();
 
-			if (selectedTotem == null) {
-				windowManager.showError("Selecione um totem para devolução");
-				return;
-			}
+	        if (selectedTotem == null) {
+	            windowManager.showError("Selecione um totem para devolução");
+	            return;
+	        }
 
-			ResponseEntity<Totem> response = totemController.buscarPorId(selectedTotem.getId());
-			if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-				Totem totem = response.getBody();
-				Tranca tranca = totem.getTrancas().stream().filter(t -> t.getNumero().equals(numeroTranca)).findFirst()
-						.orElseThrow(() -> new RuntimeException("Tranca não encontrada"));
+	        ResponseEntity<Totem> response = totemController.buscarPorId(selectedTotem.getId());
+	        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+	            Totem totem = response.getBody();
+	            Tranca tranca = totem.getTrancas().stream()
+	                .filter(t -> t.getNumero().equals(numeroTranca))
+	                .findFirst()
+	                .orElseThrow(() -> new RuntimeException("Tranca não encontrada"));
 
-				// Realizar a devolução
-				ResponseEntity<EmprestimoDTO> devolucaoResponse = emprestimoController
-						.finalizarEmprestimo(windowManager.getCurrentEmprestimoId(), tranca.getId());
+	            // Realizar a devolução - agora passando a identificação do ciclista
+	            ResponseEntity<EmprestimoDTO> devolucaoResponse = emprestimoController
+	                .finalizarEmprestimo(
+	                    windowManager.getCurrentEmprestimoId(), 
+	                    tranca.getId(),
+	                    windowManager.getCurrentUserDocument()  // Adicionado identificação do ciclista
+	                );
 
-				if (devolucaoResponse.getStatusCode().is2xxSuccessful()) {
-					windowManager.updateEmprestimoStatus(false, null);
-					windowManager.setCurrentEmprestimoId(null);
+	            if (devolucaoResponse.getStatusCode().is2xxSuccessful()) {
+	                windowManager.updateEmprestimoStatus(false, null);
+	                windowManager.setCurrentEmprestimoId(null);
 
-					windowManager.showSuccess("Bicicleta devolvida com sucesso!");
-					windowManager.showDashboard();
-				}
-			}
-		} catch (Exception e) {
-			windowManager.showError("Erro ao realizar devolução: " + e.getMessage());
-		}
+	                windowManager.showSuccess("Bicicleta devolvida com sucesso!");
+	                windowManager.showDashboard();
+	            }
+	        }
+	    } catch (Exception e) {
+	        windowManager.showError("Erro ao realizar devolução: " + e.getMessage());
+	    }
 	}
 
 	private void iniciarTimer() {
