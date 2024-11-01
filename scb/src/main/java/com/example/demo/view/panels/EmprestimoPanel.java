@@ -28,6 +28,14 @@ public class EmprestimoPanel extends JPanel {
 	private JComboBox<TotemComboItem> totemComboBox;
 	private JLabel statusLabel;
 
+	/**
+     * Construtor do painel de empréstimo
+     * 
+     * @param windowManager gerenciador de janelas do sistema
+     * @param emprestimoController controlador de empréstimos
+     * @param totemController controlador de totens
+     * @param ciclistaController controlador de ciclistas
+     */
 	public EmprestimoPanel(WindowManager windowManager, EmprestimoController emprestimoController,
 			TotemController totemController, CiclistaController ciclistaController) {
 		this.windowManager = windowManager;
@@ -37,6 +45,11 @@ public class EmprestimoPanel extends JPanel {
 		setupUI();
 	}
 
+	/**
+     * Configura a interface gráfica do painel de empréstimo
+     * Inicializa todos os componentes visuais e define o layout
+     * Inclui painéis para seleção de totem, lista de bicicletas e botões de ação
+     */
 	private void setupUI() {
 		setLayout(new BorderLayout(10, 10));
 		setBackground(ColorScheme.BACKGROUND);
@@ -132,6 +145,10 @@ public class EmprestimoPanel extends JPanel {
 		loadTotens();
 	}
 
+	/**
+     * Carrega a lista de totens disponíveis
+     * Atualiza o combobox com os totens e suas bicicletas disponíveis
+     */
 	private void loadTotens() {
 		totemComboBox.removeAllItems();
 		try {
@@ -144,6 +161,10 @@ public class EmprestimoPanel extends JPanel {
 		}
 	}
 
+	/**
+     * Carrega as bicicletas disponíveis no totem selecionado
+     * Atualiza a tabela com as bicicletas e seus detalhes
+     */
 	private void loadBicicletas() {
 		tableModel.setRowCount(0);
 		TotemComboItem selectedTotem = (TotemComboItem) totemComboBox.getSelectedItem();
@@ -169,6 +190,10 @@ public class EmprestimoPanel extends JPanel {
 		}
 	}
 
+	/**
+     * Atualiza o status de disponibilidade de bicicletas
+     * Exibe mensagem indicando quantidade de bicicletas disponíveis
+     */
 	private void updateStatus() {
 		int bicicletasDisponiveis = tableModel.getRowCount();
 		if (bicicletasDisponiveis > 0) {
@@ -180,6 +205,14 @@ public class EmprestimoPanel extends JPanel {
 		}
 	}
 
+	/**
+     * Processa o empréstimo da bicicleta selecionada
+     * Realiza validações necessárias:
+     * - Verifica existência de cartão principal
+     * - Confirma seleção de bicicleta
+     * - Solicita confirmação do usuário
+     * - Processa o empréstimo no servidor
+     */
 	private void realizarEmprestimo() {
 		// Verificar se tem cartão principal
 		try {
@@ -241,7 +274,10 @@ public class EmprestimoPanel extends JPanel {
 		}
 	}
 
-	// Classe auxiliar para o ComboBox de totens
+	/**
+     * Classe auxiliar para representar itens no combobox de totens
+     * Formata a exibição dos totens com informações de localização e disponibilidade
+     */
 	private static class TotemComboItem {
 		private final Totem totem;
 

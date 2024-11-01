@@ -1,3 +1,7 @@
+/**
+ * DTO para atualização dos dados do ciclista
+ * Contém apenas os campos que podem ser atualizados pelo usuário
+ */
 package com.example.demo.dto;
 
 public class CiclistaAtualizacaoDTO {

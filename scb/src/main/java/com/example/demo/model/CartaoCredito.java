@@ -1,3 +1,10 @@
+/**
+ * Representa um cartão de crédito no sistema
+ * Armazena informações necessárias para cobrança de empréstimos
+ * 
+ * @Entity Indica que é uma entidade JPA
+ * @NoArgsConstructor Lombok: gera construtor padrão
+ */
 package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -5,12 +12,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @Entity
 public class CartaoCredito {

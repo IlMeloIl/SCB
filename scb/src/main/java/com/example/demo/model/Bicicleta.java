@@ -1,12 +1,15 @@
+/**
+ * Representa uma bicicleta no sistema
+ * Controla o estado e informações de cada bicicleta disponível para empréstimo
+ * 
+ * @Entity Indica que é uma entidade JPA
+ * @NoArgsConstructor Lombok: gera construtor padrão
+ */
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @Entity
 public class Bicicleta {

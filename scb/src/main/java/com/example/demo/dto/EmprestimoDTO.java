@@ -1,18 +1,27 @@
+/**
+ * DTO para transferência de dados de empréstimo
+ * Usado tanto para novos empréstimos quanto para consultas
+ */
 package com.example.demo.dto;
 
 import java.time.LocalDateTime;
 
 public class EmprestimoDTO {
+	// Identificadores principais
 	private Long id;
 	private Long ciclistaId;
 	private Long bicicletaId;
+
+	// Dados da retirada
 	private Long trancaInicioId;
-	private Long trancaFimId;
 	private Long totemInicioId;
-	private Long totemFimId;
 	private LocalDateTime horaInicio;
-	private LocalDateTime horaFim;
 	private Double taxaInicial;
+
+	// Dados da devolução
+	private Long trancaFimId;
+	private Long totemFimId;
+	private LocalDateTime horaFim;
 	private Double taxaExtra;
 	private String status;
 

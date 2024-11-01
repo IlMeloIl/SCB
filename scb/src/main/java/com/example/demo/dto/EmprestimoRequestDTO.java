@@ -1,3 +1,7 @@
+/**
+ * DTO para solicitação de novo empréstimo
+ * Contém os dados mínimos necessários para iniciar um empréstimo
+ */
 package com.example.demo.dto;
 
 public class EmprestimoRequestDTO {

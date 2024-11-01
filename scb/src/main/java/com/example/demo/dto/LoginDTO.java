@@ -1,8 +1,12 @@
+/**
+ * DTO para requisição de login
+ * Encapsula as credenciais do usuário para autenticação
+ */
 package com.example.demo.dto;
 
 public class LoginDTO {
 	private String email;
-	private String senha;
+	private String senha; // Validada contra o hash
 
 	public String getEmail() {
 		return email;

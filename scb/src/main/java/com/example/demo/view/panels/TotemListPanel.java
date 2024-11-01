@@ -21,12 +21,22 @@ public class TotemListPanel extends JPanel {
 	private JLabel detailsLabel;
 	private JTextField searchField;
 
+	/**
+     * Construtor do painel de listagem de totens
+     * 
+     * @param windowManager gerenciador de janelas do sistema
+     * @param totemController controlador de operações com totens
+     */
 	public TotemListPanel(WindowManager windowManager, TotemController totemController) {
 		this.windowManager = windowManager;
 		this.totemController = totemController;
 		setupUI();
 	}
 
+	/**
+     * Configura a interface gráfica do painel
+     * Inicializa todos os componentes visuais e define o layout
+     */
 	private void setupUI() {
 		setLayout(new BorderLayout(10, 10));
 		setBackground(ColorScheme.BACKGROUND);
@@ -77,12 +87,10 @@ public class TotemListPanel extends JPanel {
 		totemTable = new JTable(tableModel);
 		totemTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		totemTable.setRowHeight(25);
-//        totemTable.getTableHeader().setBackground(ColorScheme.PRIMARY);
-//        totemTable.getTableHeader().setForeground(Color.WHITE);
 
 		JTableHeader header = totemTable.getTableHeader();
 		header.setBackground(ColorScheme.PRIMARY);
-		header.setForeground(Color.BLACK); // Alterado para preto
+		header.setForeground(Color.BLACK); 
 		header.setFont(new Font("Arial", Font.BOLD, 12));
 
 		// Adiciona ordenação à tabela
@@ -155,7 +163,11 @@ public class TotemListPanel extends JPanel {
 		add(headerPanel, BorderLayout.NORTH);
 		add(splitPane, BorderLayout.CENTER);
 	}
-
+	
+	/**
+     * Atualiza a lista de totens com dados do servidor
+     * Carrega todos os totens disponíveis e suas informações atualizadas
+     */
 	public void refreshTotemList() {
 		tableModel.setRowCount(0);
 		try {
@@ -174,6 +186,10 @@ public class TotemListPanel extends JPanel {
 		}
 	}
 
+	/**
+     * Exibe os detalhes de um totem selecionado
+     * Atualiza a tabela de trancas com as informações do totem escolhido
+     */
 	private void showTotemDetails() {
 		int selectedRow = totemTable.getSelectedRow();
 		if (selectedRow >= 0) {
@@ -192,6 +208,11 @@ public class TotemListPanel extends JPanel {
 		}
 	}
 
+	/**
+     * Atualiza a tabela de trancas com os dados do totem selecionado
+     * 
+     * @param totem totem cujas trancas serão exibidas
+     */
 	private void updateTrancasTable(Totem totem) {
 		trancasTableModel.setRowCount(0);
 		for (Tranca tranca : totem.getTrancas()) {

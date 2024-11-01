@@ -1,14 +1,21 @@
+/**
+ * DTO para resposta após autenticação bem-sucedida
+ * Contém informações da sessão e estado atual do usuário
+ */
 package com.example.demo.dto;
 
 import lombok.Data;
 
 @Data
 public class LoginResponseDTO {
+	// Dados do usuário
 	private Long id;
 	private String email;
 	private String nome;
 	private String tipo;
 	private String documento;
+	
+	// Estado atual
 	private boolean hasActiveEmprestimo;
 	private String currentBikeInfo;
 

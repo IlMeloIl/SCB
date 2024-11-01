@@ -21,12 +21,22 @@ public class DashboardPanel extends JPanel {
 	private JLabel welcomeLabel;
 	private JLabel statusLabel;
 
+	/**
+     * Construtor do painel dashboard
+     * 
+     * @param windowManager gerenciador de janelas do sistema
+     * @param ciclistaController controlador de operações do ciclista
+     */
 	public DashboardPanel(WindowManager windowManager, CiclistaController ciclistaController) {
 		this.windowManager = windowManager;
 		this.ciclistaController = ciclistaController;
 		setupUI();
 	}
 
+	/**
+     * Configura a interface gráfica principal do dashboard
+     * Inicializa todos os componentes e define o layout base
+     */
 	private void setupUI() {
 		setLayout(new BorderLayout());
 		setBackground(ColorScheme.BACKGROUND);
@@ -41,6 +51,10 @@ public class DashboardPanel extends JPanel {
 		setupContentPanel();
 	}
 
+	/**
+     * Configura o painel superior com informações do usuário e título
+     * Inclui botão de logout e nome do usuário
+     */
 	private void setupTopPanel() {
 		JPanel topPanel = new JPanel(new BorderLayout());
 		topPanel.setBackground(ColorScheme.PRIMARY);
@@ -72,6 +86,10 @@ public class DashboardPanel extends JPanel {
 		add(topPanel, BorderLayout.NORTH);
 	}
 
+	/**
+     * Configura o menu lateral com as opções de navegação
+     * Inclui status de empréstimo atual e botões de acesso às funcionalidades
+     */
 	private void setupMenuPanel() {
 		menuPanel = new JPanel();
 		menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
@@ -101,6 +119,10 @@ public class DashboardPanel extends JPanel {
 		add(menuPanel, BorderLayout.WEST);
 	}
 
+	/**
+     * Configura o painel de conteúdo principal
+     * Utiliza CardLayout para gerenciar diferentes visões
+     */
 	private void setupContentPanel() {
 		contentPanel = new JPanel();
 		contentCardLayout = new CardLayout();
@@ -121,6 +143,12 @@ public class DashboardPanel extends JPanel {
 		add(contentPanel, BorderLayout.CENTER);
 	}
 
+	/**
+     * Adiciona um botão ao menu lateral
+     * 
+     * @param text texto do botão
+     * @param listener ação a ser executada ao clicar
+     */
 	private void addMenuButton(String text, java.awt.event.ActionListener listener) {
 		JButton button = new JButton(text);
 		button.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -134,28 +162,47 @@ public class DashboardPanel extends JPanel {
 		menuPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 	}
 
-	// Métodos de navegação
+	/**
+     * Exibe o painel inicial do dashboard
+     */
 	private void showHome() {
 		contentCardLayout.show(contentPanel, "HOME");
 	}
 
+	/**
+     * Exibe o perfil do usuário
+     */
 	private void showProfile() {
 		// TODO: Implementar tela de perfil
 	}
 
+	/**
+     * Processa o logout do usuário
+     * Solicita confirmação antes de encerrar a sessão
+     */
 	private void handleLogout() {
 		if (windowManager.showConfirmDialog("Deseja realmente sair do sistema?", "Confirmação de Saída")) {
 			windowManager.showLogin();
 		}
 	}
 
-	// Métodos públicos para atualização de estado
+	/**
+     * Atualiza o nome do usuário exibido no dashboard
+     * 
+     * @param name nome do usuário a ser exibido
+     */
 	public void setUserName(String name) {
 		welcomeLabel.setText("Bem-vindo(a), " + name);
 		revalidate();
 		repaint();
 	}
 
+	/**
+     * Atualiza o status de empréstimo no dashboard
+     * 
+     * @param hasEmprestimo indica se há empréstimo ativo
+     * @param bikeInfo informações da bicicleta em uso
+     */
 	public void updateEmprestimoStatus(boolean hasEmprestimo, String bikeInfo) {
 		if (hasEmprestimo) {
 			statusLabel.setText("Em uso: " + bikeInfo);

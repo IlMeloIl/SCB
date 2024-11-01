@@ -16,5 +16,4 @@ public interface TrancaRepository extends JpaRepository<Tranca, Long> {
 
 	List<Tranca> findByTotemId(Long totemId);
 
-	boolean existsByNumero(String numero);
 }

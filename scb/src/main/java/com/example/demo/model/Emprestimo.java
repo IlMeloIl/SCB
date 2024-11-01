@@ -1,16 +1,19 @@
+/**
+ * Representa um empréstimo de bicicleta no sistema
+ * Controla todo o ciclo de vida de um empréstimo, desde a retirada até a devolução
+ * 
+ * @Entity Indica que é uma entidade JPA
+ * @NoArgsConstructor Lombok: gera construtor padrão
+ */
 package com.example.demo.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
 @NoArgsConstructor
 public class Emprestimo {
 	@Id

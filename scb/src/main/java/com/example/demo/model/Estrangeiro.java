@@ -1,14 +1,17 @@
+/**
+ * Representa um ciclista estrangeiro no sistema
+ * Estende a classe Ciclista adicionando passaporte e nacionalidade
+ * 
+ * @Entity Indica que é uma entidade JPA
+ * @DiscriminatorValue Define o valor que identifica um estrangeiro na tabela
+ */
 package com.example.demo.model;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Entity
 @DiscriminatorValue("ESTRANGEIRO")

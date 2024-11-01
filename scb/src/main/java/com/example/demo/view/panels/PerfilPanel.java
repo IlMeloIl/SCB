@@ -42,12 +42,22 @@ public class PerfilPanel extends JPanel {
 	private JPanel infoPanel;
 	private JPanel cartoesPanel;
 
+	/**
+     * Construtor do painel de perfil
+     * 
+     * @param windowManager gerenciador de janelas do sistema
+     * @param ciclistaController controlador de operações do ciclista
+     */
 	public PerfilPanel(WindowManager windowManager, CiclistaController ciclistaController) {
 		this.windowManager = windowManager;
 		this.ciclistaController = ciclistaController;
 		setupUI();
 	}
 
+	/**
+     * Configura a interface gráfica principal do painel
+     * Inicializa todos os componentes e define o layout
+     */
 	private void setupUI() {
 		setLayout(new BorderLayout(10, 10));
 		setBackground(ColorScheme.BACKGROUND);
@@ -109,6 +119,11 @@ public class PerfilPanel extends JPanel {
 		add(mainSplitPane, BorderLayout.CENTER);
 	}
 
+	/**
+     * Configura o painel de informações pessoais
+     * 
+     * @return JPanel painel configurado com campos de informação pessoal
+     */
 	private JPanel setupInfoPanel() {
 		infoPanel = new JPanel(new BorderLayout(10, 10));
 		infoPanel.setBackground(ColorScheme.BACKGROUND);
@@ -189,6 +204,11 @@ public class PerfilPanel extends JPanel {
 		return infoPanel;
 	}
 
+	/**
+     * Configura o painel de cartões de crédito
+     * 
+     * @return JPanel painel configurado com lista de cartões e ações
+     */
 	private JPanel setupCartoesPanel() {
 		cartoesPanel = new JPanel(new BorderLayout(10, 10));
 		cartoesPanel.setBackground(ColorScheme.BACKGROUND);
@@ -243,6 +263,11 @@ public class PerfilPanel extends JPanel {
 		return cartoesPanel;
 	}
 
+	/**
+     * Configura o painel de histórico de empréstimos
+     * 
+     * @return JPanel painel configurado com histórico de transações
+     */
 	private JPanel setupHistoricoPanel() {
 		JPanel panel = new JPanel(new BorderLayout(10, 10));
 		panel.setBackground(ColorScheme.BACKGROUND);
@@ -282,6 +307,10 @@ public class PerfilPanel extends JPanel {
 		return panel;
 	}
 
+	/**
+     * Carrega o histórico de empréstimos do usuário
+     * Atualiza a tabela com os dados mais recentes do servidor
+     */
 	private void carregarHistorico() {
 		try {
 			String documento = windowManager.getCurrentUserDocument();
@@ -313,6 +342,10 @@ public class PerfilPanel extends JPanel {
 		}
 	}
 
+	/**
+     * Carrega os dados do usuário do servidor
+     * Atualiza todos os campos e tabelas com as informações mais recentes
+     */
 	public void carregarDados() {
 		try {
 			String documento = windowManager.getCurrentUserDocument();
@@ -347,6 +380,11 @@ public class PerfilPanel extends JPanel {
 		}
 	}
 
+	/**
+     * Alterna o modo de edição dos campos de informação pessoal
+     * 
+     * @param edit true para habilitar edição, false para desabilitar
+     */
 	private void toggleEditMode(boolean edit) {
 		editMode = edit;
 		nomeField.setEditable(edit);
@@ -370,7 +408,11 @@ public class PerfilPanel extends JPanel {
 			carregarDados(); // Recarregar dados originais ao cancelar
 		}
 	}
-
+	
+	/**
+     * Salva as alterações realizadas no perfil
+     * Envia os dados atualizados para o servidor
+     */
 	private void salvarAlteracoes() {
 		try {
 			String novoNome = nomeField.getText().trim();
@@ -407,6 +449,11 @@ public class PerfilPanel extends JPanel {
 		}
 	}
 
+	/**
+     * Atualiza a tabela de cartões de crédito
+     * 
+     * @param cartoes lista de cartões a serem exibidos
+     */
 	private void atualizarTabelaCartoes(List<CartaoCredito> cartoes) {
 		cartoesTableModel.setRowCount(0);
 		if (cartoes != null) {
@@ -418,6 +465,10 @@ public class PerfilPanel extends JPanel {
 		}
 	}
 
+	/**
+     * Exibe diálogo para adicionar novo cartão de crédito
+     * Valida e processa os dados do novo cartão
+     */
 	private void mostrarDialogNovoCartao() {
 		JDialog dialog = new JDialog(windowManager.getMainFrame(), "Novo Cartão", true);
 		dialog.setLayout(new BorderLayout(10, 10));
@@ -474,10 +525,15 @@ public class PerfilPanel extends JPanel {
 				CartaoCreditoDTO cartaoDTO = new CartaoCreditoDTO();
 				cartaoDTO.setNumero(numeroField.getText());
 				cartaoDTO.setNomeTitular(nomeField.getText());
-				cartaoDTO.setValidade(validadeField.getText());
+				cartaoDTO.setValidade(validadeField.getText()); 
 				cartaoDTO.setCvv(cvvField.getText());
 				cartaoDTO.setPrincipal(principalCheck.isSelected());
 
+				if (!validarValidade(validadeField.getText())) {
+	                windowManager.showError("Data de validade inválida ou cartão expirado");
+	                return;
+	            }
+				
 				ciclistaController.adicionarCartaoCredito(windowManager.getCurrentUserDocument(), cartaoDTO);
 
 				dialog.dispose();
@@ -498,6 +554,10 @@ public class PerfilPanel extends JPanel {
 		dialog.setVisible(true);
 	}
 
+	/**
+     * Define o cartão selecionado como principal
+     * Atualiza o status no servidor e na interface
+     */
 	private void definirCartaoPrincipal() {
 		int selectedRow = cartoesTable.getSelectedRow();
 		if (selectedRow == -1) {
@@ -523,6 +583,10 @@ public class PerfilPanel extends JPanel {
 		}
 	}
 
+	/**
+     * Remove o cartão de crédito selecionado
+     * Confirma a ação com o usuário antes de processar
+     */
 	private void removerCartao() {
 		int selectedRow = cartoesTable.getSelectedRow();
 		if (selectedRow == -1) {
@@ -560,7 +624,12 @@ public class PerfilPanel extends JPanel {
 		}
 	}
 
-	// Método para validar número do cartão
+	/**
+     * Valida o número do cartão de crédito 
+     * 
+     * @param numero número do cartão a ser validado
+     * @return boolean true se o número é válido
+     */
 	private boolean validarNumeroCartao(String numero) {
 		return numero != null && numero.replaceAll("\\s", "").matches("\\d{16}")
 				&& validarLuhn(numero.replaceAll("\\s", ""));
@@ -586,7 +655,13 @@ public class PerfilPanel extends JPanel {
 		return (sum % 10 == 0);
 	}
 
-	// Método para validar data de validade
+	/**
+     * Valida a data de validade do cartão
+     * Verifica formato e validade temporal
+     * 
+     * @param validade data no formato MM/AA
+     * @return boolean true se a data é válida
+     */
 	private boolean validarValidade(String validade) {
 		if (!validade.matches("\\d{2}/\\d{2}")) {
 			return false;
@@ -616,12 +691,23 @@ public class PerfilPanel extends JPanel {
 		}
 	}
 
-	// Método para validar CVV
+	/**
+     * Valida o código de segurança do cartão (CVV)
+     * 
+     * @param cvv código de segurança
+     * @return boolean true se o CVV é válido
+     */
 	private boolean validarCVV(String cvv) {
 		return cvv != null && cvv.matches("\\d{3,4}");
 	}
 
-	// Método para formatar o número do cartão na exibição
+	/**
+     * Formata o número do cartão para exibição
+     * Adiciona espaços a cada 4 dígitos
+     * 
+     * @param numero número do cartão a ser formatado
+     * @return String número formatado
+     */
 	private String formatarNumeroCartao(String numero) {
 		if (numero == null)
 			return "";

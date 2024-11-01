@@ -32,6 +32,13 @@ public class DevolucaoPanel extends JPanel {
 	private LocalDateTime horaInicio;
 	private Double taxaInicial;
 
+	/**
+     * Construtor do painel de devolução
+     * 
+     * @param windowManager gerenciador de janelas do sistema
+     * @param emprestimoController controlador de empréstimos
+     * @param totemController controlador de totens
+     */
 	public DevolucaoPanel(WindowManager windowManager, EmprestimoController emprestimoController,
 			TotemController totemController) {
 		this.windowManager = windowManager;
@@ -41,6 +48,10 @@ public class DevolucaoPanel extends JPanel {
 		iniciarTimer();
 	}
 
+	 /**
+     * Configura a interface gráfica do painel de devolução
+     * Inicializa todos os componentes visuais e define o layout
+     */
 	private void setupUI() {
 		setLayout(new BorderLayout(10, 10));
 		setBackground(ColorScheme.BACKGROUND);
@@ -109,6 +120,10 @@ public class DevolucaoPanel extends JPanel {
 		add(buttonPanel, BorderLayout.SOUTH);
 	}
 
+	/**
+     * Configura a tabela de trancas disponíveis
+     * Define o modelo e a aparência da tabela
+     */
 	private void setupTranchTable() {
 		String[] columns = { "Nº Tranca", "Status", "Localização na Estação" };
 		trancasTableModel = new DefaultTableModel(columns, 0) {
@@ -127,6 +142,10 @@ public class DevolucaoPanel extends JPanel {
 		header.setFont(new Font("Arial", Font.BOLD, 12));
 	}
 
+	/**
+     * Carrega os dados do empréstimo atual
+     * Busca informações do servidor e atualiza a interface
+     */
 	public void carregarDados() {
 		try {
 			Long emprestimoId = windowManager.getCurrentEmprestimoId();
@@ -160,6 +179,10 @@ public class DevolucaoPanel extends JPanel {
 		}
 	}
 
+	/**
+     * Carrega as trancas disponíveis do totem selecionado
+     * Atualiza a tabela com as trancas livres
+     */
 	private void carregarTrancas() {
 		trancasTableModel.setRowCount(0);
 		TotemComboItem selectedTotem = (TotemComboItem) totemComboBox.getSelectedItem();
@@ -182,6 +205,10 @@ public class DevolucaoPanel extends JPanel {
 		}
 	}
 
+	/**
+     * Processa a devolução da bicicleta
+     * Valida a seleção e envia a requisição de devolução ao servidor
+     */
 	private void realizarDevolucao() {
 	    int selectedRow = trancasTable.getSelectedRow();
 	    if (selectedRow == -1) {
@@ -227,11 +254,19 @@ public class DevolucaoPanel extends JPanel {
 	    }
 	}
 
+	/**
+     * Inicia o timer para atualização do tempo de uso
+     * Atualiza a interface a cada minuto
+     */
 	private void iniciarTimer() {
 		timer = new Timer(60000, e -> atualizarInfoTempo()); // Atualiza a cada minuto
 		timer.start();
 	}
 
+	/**
+     * Atualiza as informações de tempo e valores na interface
+     * Calcula o tempo decorrido e as taxas aplicáveis
+     */
 	private void atualizarInfoTempo() {
 		if (horaInicio != null) {
 			Duration duracao = Duration.between(horaInicio, LocalDateTime.now());
@@ -251,7 +286,10 @@ public class DevolucaoPanel extends JPanel {
 		}
 	}
 
-	// Classe auxiliar para itens do combo de totens
+	/**
+     * Classe auxiliar para representar items no combobox de totens
+     * Formata a exibição dos totens com informações relevantes
+     */
 	private static class TotemComboItem {
 		private final Totem totem;
 
@@ -270,6 +308,10 @@ public class DevolucaoPanel extends JPanel {
 		}
 	}
 
+	/**
+     * Sobrescrita do método removeNotify para garantir
+     * a parada do timer quando o painel for removido
+     */
 	@Override
 	public void removeNotify() {
 		super.removeNotify();

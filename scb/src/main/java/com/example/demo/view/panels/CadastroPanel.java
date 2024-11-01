@@ -33,12 +33,23 @@ public class CadastroPanel extends JPanel {
 	private JLabel nacionalidadeLabel;
 	private DefaultComboBoxModel<String> nacionalidadeModel;
 
+	/**
+     * Construtor do painel de cadastro
+     * 
+     * @param windowManager gerenciador de janelas do sistema
+     * @param ciclistaController controlador de operações do ciclista
+     */
 	public CadastroPanel(WindowManager windowManager, CiclistaController ciclistaController) {
 		this.windowManager = windowManager;
 		this.ciclistaController = ciclistaController;
 		setupUI();
 	}
 
+	/**
+     * Configura a interface gráfica do formulário de cadastro
+     * Inicializa todos os campos e define o layout
+     * Configura listeners para interatividade do formulário
+     */
 	private void setupUI() {
 		setLayout(new GridBagLayout());
 		setBackground(ColorScheme.BACKGROUND);
@@ -198,6 +209,15 @@ public class CadastroPanel extends JPanel {
 		voltarButton.addActionListener(e -> windowManager.showLogin());
 	}
 
+	/**
+     * Processa o cadastro do usuário
+     * Valida os dados inseridos e envia para o servidor
+     * 
+     * Realiza as seguintes validações:
+     * - Campos obrigatórios preenchidos
+     * - Senhas coincidem
+     * - Validação específica por tipo de usuário (CPF/Passaporte)
+     */
 	private void handleCadastro() {
 		// Validação do tipo de usuário e nacionalidade primeiro
 		String tipoSelecionado = (String) tipoUsuarioCombo.getSelectedItem();
@@ -263,6 +283,11 @@ public class CadastroPanel extends JPanel {
 		}
 	}
 
+	/**
+     * Limpa todos os campos do formulário
+     * Reinicia o formulário para um novo cadastro
+     * Restaura as configurações padrão dos campos de seleção
+     */
 	private void limparCampos() {
 		nomeField.setText("");
 		nascimentoField.setText("");

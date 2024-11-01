@@ -1,14 +1,17 @@
+/**
+ * Representa uma tranca física no sistema
+ * Uma tranca é o dispositivo onde as bicicletas são acopladas
+ * 
+ * @Entity Indica que é uma entidade JPA
+ * @NoArgsConstructor Lombok: gera construtor padrão
+ */
 package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @Entity
 public class Tranca {

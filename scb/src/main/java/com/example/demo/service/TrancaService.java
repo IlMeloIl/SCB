@@ -1,3 +1,13 @@
+/**
+ * Serviço responsável pelo gerenciamento das trancas do sistema
+ * Controla todas as operações relacionadas às trancas, incluindo:
+ * - Associação com bicicletas
+ * - Integração com totens
+ * - Controle de status
+ * - Validações de estado
+ * 
+ * @Service Marca como um componente de serviço do Spring
+ */
 package com.example.demo.service;
 
 import com.example.demo.model.Tranca;
@@ -29,12 +39,24 @@ public class TrancaService {
 	@Autowired
 	private BicicletaRepository bicicletaRepository;
 
+	/**
+     * Lista todas as trancas cadastradas no sistema
+     *
+     * @return List<Tranca> lista de todas as trancas
+     */
 	public List<Tranca> listarTodas() {
 		List<Tranca> trancas = trancaRepository.findAll();
 		System.out.println("Número de trancas encontradas: " + trancas.size());
 		return trancas;
 	}
 
+	/**
+     * Busca uma tranca específica por seu ID
+     * Inclui informações sobre bicicleta associada, se houver
+     *
+     * @param id identificador único da tranca
+     * @return Optional<Tranca> tranca encontrada ou empty
+     */
 	public Optional<Tranca> buscarPorId(Long id) {
 		Optional<Tranca> trancaOpt = trancaRepository.findById(id);
 		trancaOpt.ifPresent(tranca -> {
@@ -48,10 +70,24 @@ public class TrancaService {
 		return trancaOpt;
 	}
 
+	/**
+     * Busca uma tranca pelo seu número único
+     *
+     * @param numero número identificador da tranca
+     * @return Optional<Tranca> tranca encontrada ou empty
+     */
 	public Optional<Tranca> buscarPorNumero(String numero) {
 		return trancaRepository.findByNumero(numero);
 	}
 
+	/**
+     * Salva uma nova tranca ou atualiza uma existente
+     * Realiza validações de unicidade e associações
+     *
+     * @param tranca tranca a ser salva/atualizada
+     * @return Tranca tranca salva com ID gerado
+     * @throws IllegalArgumentException se houver violação de unicidade
+     */
 	@Transactional
 	public Tranca salvar(Tranca tranca) {
 		System.out.println("Salvando tranca: " + tranca);
@@ -79,6 +115,13 @@ public class TrancaService {
 		}
 	}
 
+	/**
+     * Remove uma tranca do sistema
+     * Realiza desassociação segura do totem
+     *
+     * @param id ID da tranca a ser removida
+     * @throws RuntimeException se a tranca não for encontrada
+     */
 	@Transactional
 	public void deletar(Long id) {
 		Tranca tranca = trancaRepository.findById(id).orElseThrow(() -> new RuntimeException("Tranca não encontrada"));
@@ -92,14 +135,34 @@ public class TrancaService {
 		trancaRepository.delete(tranca);
 	}
 
+	/**
+     * Lista trancas por seu status atual
+     *
+     * @param status status desejado (LIVRE, OCUPADA, etc.)
+     * @return List<Tranca> lista de trancas no status especificado
+     */
 	public List<Tranca> buscarPorStatus(StatusTranca status) {
 		return trancaRepository.findByStatus(status);
 	}
 
+	/**
+     * Lista trancas de um totem específico
+     *
+     * @param totemId ID do totem
+     * @return List<Tranca> lista de trancas do totem
+     */
 	public List<Tranca> buscarPorTotem(Long totemId) {
 		return trancaRepository.findByTotemId(totemId);
 	}
 
+	/**
+     * Atualiza o status de uma tranca
+     * Usado durante empréstimos, devoluções e manutenções
+     *
+     * @param id ID da tranca
+     * @param novoStatus novo status a ser definido
+     * @return boolean true se atualizado com sucesso
+     */
 	@Transactional
 	public boolean atualizarStatus(Long id, StatusTranca novoStatus) {
 		Optional<Tranca> trancaOpt = trancaRepository.findById(id);
@@ -112,6 +175,15 @@ public class TrancaService {
 		return false;
 	}
 
+	/**
+     * Atualiza parcialmente uma tranca
+     * Permite modificar apenas alguns campos específicos
+     *
+     * @param id ID da tranca
+     * @param updates mapa com campos a serem atualizados
+     * @return Tranca tranca atualizada
+     * @throws RuntimeException se a tranca não for encontrada
+     */
 	@Transactional
 	public Tranca atualizarParcial(Long id, Map<String, Object> updates) {
 		Tranca tranca = trancaRepository.findById(id)
@@ -133,6 +205,15 @@ public class TrancaService {
 		return trancaRepository.save(tranca);
 	}
 
+	/**
+     * Associa uma bicicleta a uma tranca
+     * Atualiza o status tanto da tranca quanto da bicicleta
+     *
+     * @param trancaId ID da tranca
+     * @param bicicletaId ID da bicicleta
+     * @return Tranca tranca atualizada com a bicicleta associada
+     * @throws RuntimeException se tranca ou bicicleta não forem encontradas
+     */
 	@Transactional
 	public Tranca associarBicicleta(Long trancaId, Long bicicletaId) {
 		Tranca tranca = trancaRepository.findById(trancaId)

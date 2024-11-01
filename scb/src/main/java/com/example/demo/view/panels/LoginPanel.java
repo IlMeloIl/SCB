@@ -20,12 +20,22 @@ public class LoginPanel extends JPanel {
 	private JTextField emailField;
 	private JPasswordField senhaField;
 
+	/**
+     * Construtor do painel de login
+     * 
+     * @param windowManager gerenciador de janelas do sistema
+     * @param ciclistaController controlador de operações do ciclista
+     */
 	public LoginPanel(WindowManager windowManager, CiclistaController ciclistaController) {
 		this.windowManager = windowManager;
 		this.ciclistaController = ciclistaController;
 		setupUI();
 	}
 
+	 /**
+     * Configura a interface gráfica do login
+     * Inicializa e organiza todos os componentes visuais do painel
+     */
 	private void setupUI() {
 		setLayout(new GridBagLayout());
 		setBackground(ColorScheme.BACKGROUND);
@@ -94,6 +104,12 @@ public class LoginPanel extends JPanel {
 		add(centerPanel);
 	}
 
+	/**
+     * Processa a tentativa de login do usuário
+     * Valida as credenciais e realiza a autenticação no sistema
+     * Em caso de sucesso, redireciona para o dashboard
+     * Em caso de falha, exibe mensagem de erro apropriada
+     */
 	private void handleLogin() {
 		String email = emailField.getText();
 		String senha = new String(senhaField.getPassword());
@@ -125,6 +141,10 @@ public class LoginPanel extends JPanel {
 		}
 	}
 
+	/**
+     * Limpa os campos do formulário de login
+     * Reseta os campos de email e senha
+     */
 	private void limparCampos() {
 		emailField.setText("");
 		senhaField.setText("");

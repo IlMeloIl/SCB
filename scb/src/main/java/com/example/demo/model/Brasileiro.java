@@ -1,15 +1,18 @@
+/**
+ * Representa um ciclista brasileiro no sistema
+ * Estende a classe Ciclista adicionando CPF
+ * 
+ * @Entity Indica que é uma entidade JPA
+ * @DiscriminatorValue Define o valor que identifica um brasileiro na tabela
+ */
 package com.example.demo.model;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Entity
 @DiscriminatorValue("BRASILEIRO")

@@ -12,12 +12,16 @@ import javax.swing.*;
 public class ScbApplication {
 
 	public static void main(String[] args) {
+		
+		// Configura a aplicação para suportar interface gráfica
 		System.setProperty("java.awt.headless", "false");
-
 		SpringApplication application = new SpringApplication(ScbApplication.class);
 		application.setHeadless(false);
+		
+		// Inicializa o contexto Spring
 		final ApplicationContext springContext = application.run(args);
 
+		// Inicializa a interface gráfica na Event Dispatch Thread
 		SwingUtilities.invokeLater(() -> {
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

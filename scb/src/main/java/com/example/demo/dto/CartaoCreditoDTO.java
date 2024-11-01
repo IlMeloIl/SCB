@@ -1,3 +1,7 @@
+/**
+ * DTO para operações com cartão de crédito
+ * Transfere dados de cartão entre camadas sem expor detalhes sensíveis
+ */
 package com.example.demo.dto;
 
 public class CartaoCreditoDTO {

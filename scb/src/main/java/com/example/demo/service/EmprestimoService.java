@@ -1,3 +1,10 @@
+/**
+ * Serviço responsável pelo gerenciamento completo dos empréstimos de bicicletas
+ * Implementa toda a lógica de negócio para empréstimos, devoluções,
+ * cobranças e controle de status de equipamentos
+ * 
+ * @Service Marca como um componente de serviço do Spring
+ */
 package com.example.demo.service;
 
 import com.example.demo.dto.EmprestimoDTO;
@@ -38,10 +45,23 @@ public class EmprestimoService {
     private static final double TAXA_EXTRA_POR_HORA = 5.0;
     private static final long DURACAO_PADRAO_HORAS = 2;
 
+    /**
+     * Busca o histórico de empréstimos de um ciclista
+     * 
+     * @param ciclistaId ID do ciclista
+     * @return List<Emprestimo> lista de todos os empréstimos do ciclista
+     */
     public List<Emprestimo> buscarHistoricoEmprestimos(Long ciclistaId) {
         return emprestimoRepository.findByCiclistaId(ciclistaId);
     }
 
+    /**
+     * Verifica se um empréstimo pertence a um determinado ciclista
+     * 
+     * @param ciclista ciclista a ser verificado
+     * @param emprestimo empréstimo a ser verificado
+     * @return boolean true se o empréstimo pertence ao ciclista
+     */
     private boolean isCiclistaDoEmprestimo(Ciclista ciclista, Emprestimo emprestimo) {
         Ciclista ciclistaEmprestimo = emprestimo.getCiclista();
         
@@ -57,6 +77,20 @@ public class EmprestimoService {
         return false;
     }
 
+    /**
+     * Realiza um novo empréstimo de bicicleta.
+     * Processo:
+     * 1. Valida ciclista e verifica empréstimos ativos
+     * 2. Verifica disponibilidade da bicicleta
+     * 3. Realiza cobrança inicial
+     * 4. Libera a tranca e atualiza status
+     * 5. Registra o empréstimo
+     * 6. Envia notificação
+     * 
+     * @param requestDTO dados necessários para o empréstimo
+     * @return EmprestimoDTO dados do empréstimo realizado
+     * @throws RuntimeException em caso de falha em qualquer etapa
+     */
     @Transactional
     public EmprestimoDTO realizarEmprestimo(EmprestimoRequestDTO requestDTO) {
         Ciclista ciclista = ciclistaService.buscarCiclista(requestDTO.getIdentificacaoCiclista());
@@ -108,22 +142,38 @@ public class EmprestimoService {
         return convertToDTO(emprestimo);
     }
 
+    /**
+     * Finaliza um empréstimo ativo
+     * Processo:
+     * 1. Valida empréstimo ativo do ciclista
+     * 2. Verifica disponibilidade da tranca
+     * 3. Calcula e cobra taxas extras (se aplicável)
+     * 4. Atualiza status da bicicleta e tranca
+     * 5. Registra a devolução
+     * 6. Envia notificação
+     * 
+     * @param emprestimoId ID do empréstimo (opcional)
+     * @param trancaId ID da tranca para devolução
+     * @param identificacaoCiclista documento do ciclista
+     * @return EmprestimoDTO dados do empréstimo finalizado
+     * @throws RuntimeException em caso de falha em qualquer etapa
+     */
     @Transactional
     public EmprestimoDTO finalizarEmprestimo(Long emprestimoId, Long trancaId, String identificacaoCiclista) {
         System.out.println("Iniciando finalização do empréstimo para ciclista: " + identificacaoCiclista);
 
-        // Validar ciclista
+        // Valida ciclista
         Ciclista ciclista = ciclistaService.buscarCiclista(identificacaoCiclista);
         System.out.println("Buscando empréstimo ativo para ciclista ID: " + ciclista.getId());
 
-        // Buscar empréstimo ativo do ciclista
+        // Buscar empréstimo ativo 
         Emprestimo emprestimo = emprestimoRepository
             .findByCiclistaIdAndStatus(ciclista.getId(), StatusEmprestimo.EM_ANDAMENTO)
             .orElseThrow(() -> new RuntimeException("Nenhum empréstimo em andamento encontrado para este ciclista"));
 
         System.out.println("Empréstimo ativo encontrado - ID: " + emprestimo.getId());
 
-        // Buscar e validar tranca
+        // Busca e valida tranca
         Tranca trancaFim = trancaService.buscarPorId(trancaId)
                 .orElseThrow(() -> new RuntimeException("Tranca não encontrada"));
 
@@ -131,19 +181,19 @@ public class EmprestimoService {
             throw new RuntimeException("Esta tranca não está disponível para devolução");
         }
 
-        // Validar bicicleta
+        // Valida bicicleta
         Bicicleta bicicleta = emprestimo.getBicicleta();
         if (bicicleta == null) {
             throw new RuntimeException("Bicicleta não encontrada no empréstimo");
         }
 
-        // Atualizar dados
+        // Atualiza dados do empréstimo
         LocalDateTime horaFim = LocalDateTime.now();
         emprestimo.setHoraFim(horaFim);
         emprestimo.setTrancaFim(trancaFim);
         emprestimo.setTotemFim(trancaFim.getTotem());
 
-        // Processar cobrança extra
+        // Processa cobrança extra
         long horasDeUso = Duration.between(emprestimo.getHoraInicio(), horaFim).toHours();
         if (horasDeUso > DURACAO_PADRAO_HORAS) {
             long horasExtras = horasDeUso - DURACAO_PADRAO_HORAS;
@@ -152,11 +202,11 @@ public class EmprestimoService {
             cartaoCreditoService.realizarCobranca(ciclista, taxaExtra);
         }
 
-        // Atualizar status
+        // Atualiza status
         emprestimo.setStatus(StatusEmprestimo.CONCLUIDO);
         bicicleta.setStatus(StatusBicicleta.DISPONIVEL);
         
-        // Salvar alterações
+        // Salva alterações
         bicicletaService.atualizarStatus(bicicleta.getId(), StatusBicicleta.DISPONIVEL);
         trancaService.associarBicicleta(trancaId, bicicleta.getId());
         emprestimo = emprestimoRepository.save(emprestimo);
@@ -169,6 +219,12 @@ public class EmprestimoService {
         return convertToDTO(emprestimo);
     }
 
+    /**
+     * Converte um objeto Emprestimo para EmprestimoDTO
+     * 
+     * @param emprestimo objeto a ser convertido
+     * @return EmprestimoDTO objeto convertido
+     */
     public EmprestimoDTO convertToDTO(Emprestimo emprestimo) {
         EmprestimoDTO dto = new EmprestimoDTO();
         dto.setId(emprestimo.getId());

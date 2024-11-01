@@ -1,7 +1,13 @@
+/**
+ * Classe abstrata que representa um ciclista no sistema
+ * Serve como base para Brasileiro e Estrangeiro
+ * 
+ * @Entity Indica que é uma entidade JPA
+ * @Inheritance Define estratégia de herança de tabela única
+ * @DiscriminatorColumn Define coluna que diferencia os tipos de ciclista
+ */
 package com.example.demo.model;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -16,8 +22,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-@Getter
-@Setter
+
 @NoArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -127,15 +132,6 @@ public abstract class Ciclista {
 
 	public void setStatus(StatusCiclista status) {
 		this.status = status;
-	}
-
-	// Métodos
-	public void adicionarCartao(CartaoCredito cartao) {
-		this.cartoes.add(cartao);
-	}
-
-	public void removerCartao(CartaoCredito cartao) {
-		this.cartoes.remove(cartao);
 	}
 
 }

@@ -1,3 +1,10 @@
+/**
+ * Inicializador de dados de demonstração
+ * Esta classe é responsável por popular o banco de dados com dados iniciais para teste
+ * e demonstração do sistema
+ *
+ * @Component Marca esta classe como um componente gerenciado pelo Spring
+ */
 package com.example.demo.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +25,25 @@ public class DemoDataInitializer implements CommandLineRunner {
 	@Autowired
 	private BicicletaService bicicletaService;
 
+	/**
+	 * Método executado automaticamente durante a inicialização Verifica se já
+	 * existem dados no sistema antes de criar novos.
+	 * 
+	 * @param args argumentos da linha de comando (não utilizados)
+	 */
 	@Override
 	public void run(String... args) {
-		// Verifica se já existem dados
 		if (totemService.listarTodos().isEmpty()) {
 			initializeDemoData();
 		}
 	}
 
+	/**
+	 * Inicializa o sistema com dados de demonstração. Cria totens em diferentes
+	 * localizações, cada um com suas trancas e bicicletas associadas.
+	 */
 	private void initializeDemoData() {
+		// Arrays com dados de demonstração
 		String[] localizacoes = { "Praça da Liberdade - Memorial Vale", "Shopping Diamond Mall - Entrada Principal",
 				"UFMG - Praça de Serviços", "Parque Municipal - Portaria 1" };
 
@@ -38,8 +55,9 @@ public class DemoDataInitializer implements CommandLineRunner {
 
 		String[] marcas = { "Caloi", "Scott", "Trek", "Specialized" };
 
+		// Criação dos totens e seus componentes
 		for (int t = 0; t < localizacoes.length; t++) {
-			// Criar totem
+			// Criar totem com capacidade padrão de 20 trancas
 			Totem totem = new Totem();
 			totem.setLocalizacao(localizacoes[t]);
 			totem.setDescricao(descricoes[t]);
@@ -53,7 +71,7 @@ public class DemoDataInitializer implements CommandLineRunner {
 				tranca.setStatus(StatusTranca.LIVRE);
 				tranca.setTotem(totem);
 
-				// Numero de trancas com bicicletas
+				// Criar bicicletas apenas para as primeiras 14 trancas
 				if (i <= 14) {
 					// Criar bicicleta
 					Bicicleta bicicleta = new Bicicleta();

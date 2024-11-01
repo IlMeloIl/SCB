@@ -1,10 +1,15 @@
+/**
+ * Representa um totem físico do sistema
+ * Um totem é um ponto de retirada/devolução que contém múltiplas trancas
+ * 
+ * @Entity Indica que é uma entidade JPA
+ * @NoArgsConstructor Lombok: gera construtor padrão
+ */
 package com.example.demo.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
@@ -12,8 +17,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @Entity
 public class Totem {
@@ -74,13 +77,21 @@ public class Totem {
 		this.trancas = trancas;
 	}
 
-	// Métodos adicionais
-
+	// Métodos de gerenciamento de tranca
+	
+	/**
+     * Adiciona uma nova tranca ao totem
+     * @param tranca Tranca a ser adicionada
+     */
 	public void addTranca(Tranca tranca) {
 		trancas.add(tranca);
 		tranca.setTotem(this);
 	}
-
+	
+	/**
+     * Remove uma tranca do totem
+     * @param tranca Tranca a ser removida
+     */
 	public void removeTranca(Tranca tranca) {
 		trancas.remove(tranca);
 		tranca.setTotem(null);
